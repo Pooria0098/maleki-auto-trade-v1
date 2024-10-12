@@ -7,7 +7,6 @@ from .celery import app
 from celery.contrib.abortable import AbortableTask
 from django_celery_results.models import TaskResult
 
-from django.contrib.auth.models import User
 from django.conf import settings
 from celery.exceptions import Ignore, TaskError
 

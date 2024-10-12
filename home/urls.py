@@ -1,8 +1,11 @@
 from django.urls import path
 from home import views
 from django.contrib.auth import views as auth_views
+from django.urls import path, include, re_path
 
 urlpatterns = [
+  path('', include('home.home_urls.api')),
+
   # Dashboard
   path('', views.default, name='index'),
   path('dashboard/ecommerce/', views.dashboard_ecommerce, name='dashboard_ecommerce'),
@@ -204,7 +207,7 @@ urlpatterns = [
   path('accounts/password-reset-done/', auth_views.PasswordResetDoneView.as_view(
     template_name='accounts/password-reset-done.html'
   ), name='password_reset_done'),
-  path('accounts/password-reset-confirm/<uidb64>/<token>/', 
+  path('accounts/password-reset-confirm/<uidb64>/<token>/',
     views.UserPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
   path('accounts/password-reset-complete/', auth_views.PasswordResetCompleteView.as_view(
     template_name='accounts/password-reset-complete.html'

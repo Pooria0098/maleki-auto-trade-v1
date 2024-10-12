@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     'apps.tables',
     'apps.tasks',
     'apps.users',
+    'apps.trade',
 
     'allauth',
     'allauth.account',
@@ -212,6 +213,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = '/'
 
+AUTH_USER_MODEL = "home.User"
 
 # AllAuth
 ACCOUNT_EMAIL_VERIFICATION =  os.getenv('ACCOUNT_EMAIL_VERIFICATION', 'none')
