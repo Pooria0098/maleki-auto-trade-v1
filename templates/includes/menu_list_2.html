@@ -2,296 +2,14 @@
 
 <ul class="nav pcoded-inner-navbar ">
 
-  {% if request.user.is_authenticated %}
-    <li class="nav-item pcoded-menu-caption">
-      <label>Dashboard</label>
-    </li>
-    <li data-username="" class="nav-item pcoded-hasmenu">
-      <a href="#" class="nav-link">
-        <span class="pcoded-micon">
-          <i class="feather icon-menu"></i>
-        </span>
-        <span class="pcoded-mtext">Dashboard</span>
-      </a>
-      <ul class="pcoded-submenu">
-        <li class="pcoded-hasmenu">
-          <a href="#">Future</a>
-          <ul class="pcoded-submenu">
-            <li><a href="">Binance</a></li>
-            <li><a href="">Kucoin</a></li>
-            <li><a href="">Mexc</a></li>
-            <li><a href="">Bingx</a></li>
-          </ul>
-        </li>
-        <li class="pcoded-hasmenu">
-          <a href="#">Spot</a>
-          <ul class="pcoded-submenu">
-            <li><a href="">Kucoin</a></li>
-            <li><a href="">Mexc</a></li>
-            <li><a href="">Bingx</a></li>
-          </ul>
-        </li>
-      </ul>
-    </li>
 
-    <li class="nav-item pcoded-menu-caption">
-      <label>Api/Bot Management</label>
-    </li>
-    <li data-username="" class="nav-item pcoded-hasmenu">
-      <a href="#" class="nav-link"><span class="pcoded-micon"><i class="feather icon-lock"></i></span><span
-              class="pcoded-mtext">Api/Bot Management</span></a>
-      <ul class="pcoded-submenu">
-        <li class="pcoded-hasmenu">
-          <a href="#">Api</a>
-          <ul class="pcoded-submenu">
-            <li><a href="">Future</a></li>
-            <li><a href="">Spot</a></li>
-          </ul>
-        </li>
-        <li class="pcoded-hasmenu">
-          <a href="#">Ultra Grid Bot</a>
-          <ul class="pcoded-submenu">
-            <li class="pcoded-hasmenu">
-              <a href="#">Future</a>
-              <ul class="pcoded-submenu">
-                <li><a href="">Binance</a></li>
-                <li><a href="">Kucoin</a></li>
-                <li><a href="">Mexc</a></li>
-                <li><a href="">Bingx</a></li>
-              </ul>
-            </li>
-            <li class="pcoded-hasmenu">
-              <a href="#">Spot</a>
-              <ul class="pcoded-submenu">
-                <li><a href="">Kucoin</a></li>
-                <li><a href="">Mexc</a></li>
-                <li><a href="">Bingx</a></li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-        <li class="pcoded-hasmenu">
-          <a href="#">Ultra DCA Bot</a>
-          <ul class="pcoded-submenu">
-            <li class="pcoded-hasmenu">
-              <a href="#">Future</a>
-              <ul class="pcoded-submenu">
-                <li><a href="">Binance</a></li>
-                <li><a href="">Kucoin</a></li>
-                <li><a href="">Mexc</a></li>
-                <li><a href="">Bingx</a></li>
-              </ul>
-            </li>
-            <li class="pcoded-hasmenu">
-              <a href="#">Spot</a>
-              <ul class="pcoded-submenu">
-                <li><a href="">Kucoin</a></li>
-                <li><a href="">Mexc</a></li>
-                <li><a href="">Bingx</a></li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </li>
-
-    <li class="nav-item pcoded-menu-caption">
-      <label>Signal Management</label>
-    </li>
-    <li data-username="" class="nav-item pcoded-hasmenu">
-      <a href="#" class="nav-link"><span class="pcoded-micon"><i class="feather icon-lock"></i></span><span
-              class="pcoded-mtext">Signal Management</span></a>
-      <ul class="pcoded-submenu">
-        <li class="pcoded-hasmenu">
-          <a href="#">Future</a>
-          <ul class="pcoded-submenu">
-            <li><a href="">Binance</a></li>
-            <li><a href="">Kucoin</a></li>
-            <li><a href="">Mexc</a></li>
-            <li><a href="">Bingx</a></li>
-          </ul>
-        </li>
-        <li class="pcoded-hasmenu">
-          <a href="#">Spot</a>
-          <ul class="pcoded-submenu">
-            <li><a href="">Kucoin</a></li>
-            <li><a href="">Mexc</a></li>
-            <li><a href="">Bingx</a></li>
-          </ul>
-        </li>
-      </ul>
-    </li>
-
-    <li class="nav-item pcoded-menu-caption">
-      <label>Config Management</label>
-    </li>
-    <li data-username="" class="nav-item pcoded-hasmenu">
-      <a href="#" class="nav-link"><span class="pcoded-micon"><i class="feather icon-lock"></i></span><span
-              class="pcoded-mtext">Config Management</span></a>
-      <ul class="pcoded-submenu">
-        <li class="pcoded-hasmenu">
-          <a href="#">Future</a>
-          <ul class="pcoded-submenu">
-            <li><a href="">Binance</a></li>
-            <li><a href="">Kucoin</a></li>
-            <li><a href="">Mexc</a></li>
-            <li><a href="">Bingx</a></li>
-          </ul>
-        </li>
-        <li class="pcoded-hasmenu">
-          <a href="#">Spot</a>
-          <ul class="pcoded-submenu">
-            <li><a href="">Kucoin</a></li>
-            <li><a href="">Mexc</a></li>
-            <li><a href="">Bingx</a></li>
-          </ul>
-        </li>
-      </ul>
-    </li>
-
-    <li class="nav-item pcoded-menu-caption">
-      <label>Wallet Management</label>
-    </li>
-    <li data-username="" class="nav-item pcoded-hasmenu">
-      <a href="#" class="nav-link">
-        <span class="pcoded-micon">
-          <i class="feather icon-lock"></i>
-        </span>
-        <span class="pcoded-mtext">Wallet Management</span>
-      </a>
-    </li>
-
-    <li class="nav-item pcoded-menu-caption">
-      <label>MarketPlace</label>
-    </li>
-    <li data-username="" class="nav-item pcoded-hasmenu">
-      <a href="#" class="nav-link">
-        <span class="pcoded-micon">
-          <i class="feather icon-lock"></i>
-        </span>
-        <span class="pcoded-mtext">MarketPlace</span>
-      </a>
-      <ul class="pcoded-submenu">
-        <li class="pcoded-hasmenu">
-          <a href="#">Config MarketPlace</a>
-          <ul class="pcoded-submenu">
-            <li class="pcoded-hasmenu">
-              <a href="#">Future</a>
-              <ul class="pcoded-submenu">
-                <li><a href="">Binance</a></li>
-                <li><a href="">Kucoin</a></li>
-                <li><a href="">Mexc</a></li>
-                <li><a href="">Bingx</a></li>
-              </ul>
-            </li>
-            <li class="pcoded-hasmenu">
-              <a href="#">Spot</a>
-              <ul class="pcoded-submenu">
-                <li><a href="">Kucoin</a></li>
-                <li><a href="">Mexc</a></li>
-                <li><a href="">Bingx</a></li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-        <li class="pcoded-hasmenu">
-          <a href="#">Signal MarketPlace</a>
-          <ul class="pcoded-submenu">
-            <li class="pcoded-hasmenu">
-              <a href="#">Future</a>
-              <ul class="pcoded-submenu">
-                <li><a href="">Binance</a></li>
-                <li><a href="">Kucoin</a></li>
-                <li><a href="">Mexc</a></li>
-                <li><a href="">Bingx</a></li>
-              </ul>
-            </li>
-            <li class="pcoded-hasmenu">
-              <a href="#">Spot</a>
-              <ul class="pcoded-submenu">
-                <li><a href="">Kucoin</a></li>
-                <li><a href="">Mexc</a></li>
-                <li><a href="">Bingx</a></li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </li>
-
-    <li class="nav-item pcoded-menu-caption">
-      <label>Alarms</label>
-    </li>
-    <li data-username="" class="nav-item pcoded-hasmenu">
-      <a href="#" class="nav-link"><span class="pcoded-micon"><i class="feather icon-lock"></i></span><span
-              class="pcoded-mtext">Alarms</span></a>
-    </li>
-
-    <li class="nav-item pcoded-menu-caption">
-      <label>Support</label>
-    </li>
-
-  {% endif %}
-
-  {% if not request.user.is_authenticated %}
-    <li class="nav-item pcoded-menu-caption">
-      <label>Navigation</label>
-    </li>
-    <li data-username="dashboard Default Ecommerce CRM Analytics Crypto Project" class="nav-item pcoded-hasmenu">
-      <a href="#" class="nav-link"><span class="pcoded-micon"><i class="feather icon-home"></i></span><span
-              class="pcoded-mtext">Dashboard</span></a>
-      <ul class="pcoded-submenu">
-        <li><a href="{% url 'admin:index' %}">Default</a></li>
-      </ul>
-    </li>
-    <li
-            data-username="Authentication Sign up Sign in reset password Change password Personal information profile settings map form subscribe"
-            class="nav-item pcoded-hasmenu"
-    >
-      <a href="#" class="nav-link"><span class="pcoded-micon"><i class="feather icon-lock"></i></span><span
-              class="pcoded-mtext">Authentication</span></a>
-      <ul class="pcoded-submenu">
-        <li><a href="{% url 'login_v1' %}">Sign IN</a></li>
-        <li><a href="{% url 'register_v1' %}">Sign UP</a></li>
-      </ul>
-    </li>
-  {% endif %}
-
-  {% admin_get_menu as app_list %}
-  {% if app_list %}
-    {% for app in app_list %}
-      {% if app.has_perms and not app.pinned %}
-        <li class="nav-item pcoded-hasmenu">
-          <a href="#" class="nav-link">
-            <span class="pcoded-micon"><i
-                    class="{% if app.icon %} {{ app.icon }} {% else %} feather icon-home {% endif %}"></i></span>
-            <span class="pcoded-mtext">{{ app.label|slice:15 }}{% if app.label|length > 15 %}..{% endif %}</span>
-          </a>
-          {% if app.models %}
-            <ul class="pcoded-submenu">
-              {% for model in app.models %}
-                {% if model.url %}
-                  <li>
-                    <a href="{{ model.url }}">{{ model.label }}</a>
-                  </li>
-                {% else %}
-                  <li class="nav-item list-unstyled">{{ model.label }}</li>
-                {% endif %}
-              {% endfor %}
-            </ul>
-          {% endif %}
-        </li>
-      {% endif %}
-    {% endfor %}
-  {% endif %}
-
-  {% if request.user.is_authenticated and request.user.is_superuser %}
+  {% if request.user.is_authenticated and not request.user.is_superuser %}
     <li class="nav-item pcoded-menu-caption">
       <label>Navigation</label>
     </li>
     <li data-username="dashboard Default Ecommerce CRM Analytics Crypto Project" class="nav-item pcoded-hasmenu">
       <a href="#" class="nav-link"><span class="pcoded-micon"><i class="feather icon-grid"></i></span><span
-              class="pcoded-mtext">Apps</span></a>
+          class="pcoded-mtext">Apps</span></a>
       <ul class="pcoded-submenu">
         <li><a href="{% url "charts" %}">Charts</a></li>
         <li><a href="/api/sales/" target="_blank">API</a></li>
@@ -304,21 +22,21 @@
     </li>
     <li data-username="dashboard Default Ecommerce CRM Analytics Crypto Project" class="nav-item pcoded-hasmenu">
       <a href="#" class="nav-link"><span class="pcoded-micon"><i class="feather icon-home"></i></span><span
-              class="pcoded-mtext">Dashboard</span></a>
+          class="pcoded-mtext">Dashboard</span></a>
       <ul class="pcoded-submenu">
         <li><a href="{% url 'index' %}">Default</a></li>
         <li><a href="{% url 'dashboard_ecommerce' %}">Ecommerce</a></li>
         <li><a href="{% url 'dashboard_crm' %}">CRM</a></li>
         <li><a href="{% url 'dashboard_analytics' %}">Analytics</a></li>
         <li><a href="{% url 'dashboard_crypto' %}">Crypto<span
-                class="pcoded-badge label label-danger">NEW</span></a></li>
+              class="pcoded-badge label label-danger">NEW</span></a></li>
         <li><a href="{% url 'dashboard_project' %}">Project</a></li>
       </ul>
     </li>
     <li data-username="Vertical Horizontal Box Layout RTL fixed static Collapse menu color icon dark"
-        class="nav-item pcoded-hasmenu">
+      class="nav-item pcoded-hasmenu">
       <a href="#" class="nav-link"><span class="pcoded-micon"><i class="feather icon-layout"></i></span><span
-              class="pcoded-mtext">Page layouts</span></a>
+          class="pcoded-mtext">Page layouts</span></a>
       <ul class="pcoded-submenu">
         <li class="pcoded-hasmenu"><a href="#">Vertical</a>
           <ul class="pcoded-submenu">
@@ -333,13 +51,13 @@
         <li><a href="{% url 'rtl_layout' %}">RTL</a></li>
         <li><a href="{% url 'light_layout' %}">Light layout</a></li>
         <li><a href="{% url 'dark_layout' %}">Dark layout <span
-                class="pcoded-badge label label-danger">Hot</span></a></li>
+              class="pcoded-badge label label-danger">Hot</span></a></li>
         <li><a href="{% url 'color_icon_layout' %}">Color icon</a></li>
       </ul>
     </li>
     <li data-username="widget Statistic Data Table User card Chart" class="nav-item pcoded-hasmenu">
       <a href="#" class="nav-link"><span class="pcoded-micon"><i class="feather icon-layers"></i></span><span
-              class="pcoded-mtext">Widget</span></a>
+          class="pcoded-mtext">Widget</span></a>
       <ul class="pcoded-submenu">
         <li><a href="{% url 'widget_statistic' %}">Statistic</a></li>
         <li><a href="{% url 'widget_data' %}">Data</a></li>
@@ -350,7 +68,7 @@
     </li>
     <li data-username="widget Statistic Data Table User card Chart" class="nav-item pcoded-hasmenu">
       <a href="#" class="nav-link"><span class="pcoded-micon"><i class="feather icon-users"></i></span><span
-              class="pcoded-mtext">User</span><span class="pcoded-badge label label-primary">New</span></a>
+          class="pcoded-mtext">User</span><span class="pcoded-badge label label-primary">New</span></a>
       <ul class="pcoded-submenu">
         <li><a href="{% url 'user_profile' %}">Profile</a></li>
         <li><a href="{% url 'social_profile' %}">Social Profile</a></li>
@@ -362,10 +80,10 @@
       <label>UI Element</label>
     </li>
     <li
-            data-username="basic components Button Alert Badges breadcrumb Paggination progress Tooltip popovers Carousel Cards Collapse Tabs pills Modal Grid System Typography Extra Shadows Embeds"
-            class="nav-item pcoded-hasmenu">
+      data-username="basic components Button Alert Badges breadcrumb Paggination progress Tooltip popovers Carousel Cards Collapse Tabs pills Modal Grid System Typography Extra Shadows Embeds"
+      class="nav-item pcoded-hasmenu">
       <a href="#" class="nav-link"><span class="pcoded-micon"><i class="feather icon-box"></i></span><span
-              class="pcoded-mtext">Basic</span></a>
+          class="pcoded-mtext">Basic</span></a>
       <ul class="pcoded-submenu">
         <li><a href="{% url 'bc_alert' %}">Alert</a></li>
         <li><a href="{% url 'bc_button' %}">Button</a></li>
@@ -378,7 +96,7 @@
         <li><a href="{% url 'bc_progress' %}">Progress</a></li>
         <li><a href="{% url 'bc_modal' %}">Modal</a></li>
         <li><a href="{% url 'bc_spinner' %}">Spinner<span
-                class="pcoded-badge label label-danger">NEW</span></a></li>
+              class="pcoded-badge label label-danger">NEW</span></a></li>
         <li><a href="{% url 'bc_navs_tabs' %}">Tabs & pills</a></li>
         <li><a href="{% url 'bc_typography' %}">Typography</a></li>
         <li><a href="{% url 'bc_tooltips_popover' %}">Tooltip & popovers</a></li>
@@ -389,10 +107,10 @@
       </ul>
     </li>
     <li
-            data-username="advance components Alert gridstack lightbox modal notification pnotify rating rangeslider slider syntax highlighter Tour Tree view Nestable Toolbar"
-            class="nav-item pcoded-hasmenu">
+      data-username="advance components Alert gridstack lightbox modal notification pnotify rating rangeslider slider syntax highlighter Tour Tree view Nestable Toolbar"
+      class="nav-item pcoded-hasmenu">
       <a href="#" class="nav-link"><span class="pcoded-micon"><i class="feather icon-gitlab"></i></span><span
-              class="pcoded-mtext">Advance</span></a>
+          class="pcoded-mtext">Advance</span></a>
       <ul class="pcoded-submenu">
         <li><a href="{% url 'ac_alert' %}">Sweet alert</a></li>
         <li><a href="{% url 'ac_datepicker' %}">Datepicker</a></li>
@@ -410,17 +128,17 @@
       </ul>
     </li>
     <li data-username="Animations" class="nav-item"><a href="{% url 'animation' %}" class="nav-link"><span
-            class="pcoded-micon"><i class="feather icon-aperture"></i></span><span
-            class="pcoded-mtext">Animations</span></a></li>
+          class="pcoded-micon"><i class="feather icon-aperture"></i></span><span
+          class="pcoded-mtext">Animations</span></a></li>
     <li data-username="icons Feather Fontawsome flag material simple line themify"
-        class="nav-item pcoded-hasmenu">
+      class="nav-item pcoded-hasmenu">
       <a href="#" class="nav-link"><span class="pcoded-micon"><i class="feather icon-feather"></i></span><span
-              class="pcoded-mtext">Icons</span></a>
+          class="pcoded-mtext">Icons</span></a>
       <ul class="pcoded-submenu">
         <li><a href="{% url 'feather_icon' %}">Feather<span
-                class="pcoded-badge label label-danger">NEW</span></a></li>
+              class="pcoded-badge label label-danger">NEW</span></a></li>
         <li><a href="{% url 'font_awesome' %}">Font Awesome 5<span
-                class="pcoded-badge label label-primary">1000+</span></a></li>
+              class="pcoded-badge label label-primary">1000+</span></a></li>
         <li><a href="{% url 'flag_icon' %}">Flag</a></li>
         <li><a href="{% url 'material_icon' %}">Material</a></li>
         <li><a href="{% url 'simple_line' %}">Simple line</a></li>
@@ -431,9 +149,9 @@
       <label>Forms</label>
     </li>
     <li data-username="form elements advance component validation masking wizard picker select"
-        class="nav-item pcoded-hasmenu">
+      class="nav-item pcoded-hasmenu">
       <a href="#" class="nav-link"><span class="pcoded-micon"><i class="feather icon-file-text"></i></span><span
-              class="pcoded-mtext">Forms</span></a>
+          class="pcoded-mtext">Forms</span></a>
       <ul class="pcoded-submenu">
         <li class=""><a href="{% url 'form_basic' %}" class="">Form Basic</a></li>
         <li class=""><a href="{% url 'form_elements' %}" class="">Form elements</a></li>
@@ -445,9 +163,9 @@
       </ul>
     </li>
     <li data-username="form elements advance component validation masking wizard picker select"
-        class="nav-item pcoded-hasmenu">
+      class="nav-item pcoded-hasmenu">
       <a href="#" class="nav-link"><span class="pcoded-micon"><i class="feather icon-file-text"></i></span><span
-              class="pcoded-mtext">Forms Plugins</span></a>
+          class="pcoded-mtext">Forms Plugins</span></a>
       <ul class="pcoded-submenu">
         <li class="pcoded-hasmenu"><a href="#" class="">Date</a>
           <ul class="pcoded-submenu">
@@ -477,9 +195,9 @@
       </ul>
     </li>
     <li data-username="form elements advance component validation masking wizard picker select"
-        class="nav-item pcoded-hasmenu">
+      class="nav-item pcoded-hasmenu">
       <a href="#" class="nav-link"><span class="pcoded-micon"><i class="feather icon-file-text"></i></span><span
-              class="pcoded-mtext">Text Editors</span></a>
+          class="pcoded-mtext">Text Editors</span></a>
       <ul class="pcoded-submenu">
         <li><a href="{% url 'tinymce' %}">Tinymce</a></li>
         <li><a href="{% url 'quill' %}">Quill</a></li>
@@ -496,9 +214,9 @@
       </ul>
     </li>
     <li data-username="form elements advance component validation masking wizard picker select"
-        class="nav-item pcoded-hasmenu">
+      class="nav-item pcoded-hasmenu">
       <a href="#" class="nav-link"><span class="pcoded-micon"><i class="feather icon-file-text"></i></span><span
-              class="pcoded-mtext">Form Layouts</span></a>
+          class="pcoded-mtext">Form Layouts</span></a>
       <ul class="pcoded-submenu">
         <li><a href="{% url 'default_layout' %}">Layouts</a></li>
         <li><a href="{% url 'multicolumn_layout' %}">Multicolumn</a></li>
@@ -507,23 +225,21 @@
       </ul>
     </li>
     <li data-username="form elements advance component validation masking wizard picker select"
-        class="nav-item pcoded-hasmenu">
+      class="nav-item pcoded-hasmenu">
       <a href="#" class="nav-link"><span class="pcoded-micon"><i class="feather icon-file-text"></i></span><span
-              class="pcoded-mtext">File upload</span></a>
+          class="pcoded-mtext">File upload</span></a>
       <ul class="pcoded-submenu">
         <li><a href="{% url 'dropzone' %}">Dropzone</a></li>
         <li><a href="{% url 'uppy' %}">Uppy</a></li>
       </ul>
     </li>
     <li data-username="Form Validation" class="nav-item"><a href="{% url 'form_validation' %}"
-                                                            class="nav-link"><span class="pcoded-micon"><i
-            class="feather icon-grid"></i></span><span
-            class="pcoded-mtext">Form
+        class="nav-link"><span class="pcoded-micon"><i class="feather icon-grid"></i></span><span
+          class="pcoded-mtext">Form
           Validation</span></a></li>
     <li data-username="Form image cropper" class="nav-item"><a href="{% url 'image_cropper' %}"
-                                                               class="nav-link"><span class="pcoded-micon"><i
-            class="feather icon-scissors"></i></span><span
-            class="pcoded-mtext">Image
+        class="nav-link"><span class="pcoded-micon"><i class="feather icon-scissors"></i></span><span
+          class="pcoded-mtext">Image
           cropper</span></a></li>
     <!-- <li data-username="form wizard" class="nav-item pcoded-hasmenu">
           <a href="#" class="nav-link"><span class="pcoded-micon"><i class="feather icon-file-text"></i></span><span class="pcoded-mtext">Form Wizard</span></a>
@@ -538,11 +254,11 @@
     </li>
     <li data-username="Table bootstrap" class="nav-item">
       <a href="{% url 'bs_table' %}" class="nav-link"><span class="pcoded-micon"><i
-              class="feather icon-server"></i></span><span class="pcoded-mtext">Table</span></a>
+            class="feather icon-server"></i></span><span class="pcoded-mtext">Table</span></a>
     </li>
     <li class="nav-item pcoded-hasmenu">
       <a href="#" class="nav-link "><span class="pcoded-micon"><i class="feather icon-server"></i></span><span
-              class="pcoded-mtext">Vanilla table</span></a>
+          class="pcoded-mtext">Vanilla table</span></a>
       <ul class="pcoded-submenu">
         <li><a href="{% url 'basic_table' %}">Basic initialization</a></li>
         <li><a href="{% url 'dynamic_import' %}">Dynamic Import</a></li>
@@ -558,7 +274,7 @@
     </li>
     <li class="nav-item pcoded-hasmenu">
       <a href="#" class="nav-link "><span class="pcoded-micon"><i class="feather icon-server"></i></span><span
-              class="pcoded-mtext">Data table</span></a>
+          class="pcoded-mtext">Data table</span></a>
       <ul class="pcoded-submenu">
         <li><a href="{% url 'dt_basic_table' %}">Basic initialization</a></li>
         <li><a href="{% url 'dt_advance_table' %}">Advance initialization</a></li>
@@ -570,7 +286,7 @@
     </li>
     <li class="nav-item pcoded-hasmenu">
       <a href="#" class="nav-link "><span class="pcoded-micon"><i class="feather icon-server"></i></span><span
-              class="pcoded-mtext">DT extensions</span></a>
+          class="pcoded-mtext">DT extensions</span></a>
       <ul class="pcoded-submenu">
         <li><a href="{% url 'dt_autofill' %}">Autofill</a></li>
         <li class="pcoded-hasmenu">
@@ -594,9 +310,9 @@
       <label>Chart & Maps</label>
     </li>
     <li data-username="Charts AM Chart js Echart Google Highchart Knob Morris Nvd3 Peity Radial"
-        class="nav-item pcoded-hasmenu">
+      class="nav-item pcoded-hasmenu">
       <a href="#" class="nav-link"><span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span><span
-              class="pcoded-mtext">Chart</span></a>
+          class="pcoded-mtext">Chart</span></a>
       <ul class="pcoded-submenu">
         <li><a href="{% url 'amchart_4' %}">amChart 4</a></li>
         <li><a href="{% url 'chartjs' %}">Chart js</a></li>
@@ -612,7 +328,7 @@
     </li>
     <li data-username="Maps Google Vector Google Map Search API Location" class="nav-item pcoded-hasmenu">
       <a href="#" class="nav-link"><span class="pcoded-micon"><i class="feather icon-map"></i></span><span
-              class="pcoded-mtext">Maps</span></a>
+          class="pcoded-mtext">Maps</span></a>
       <ul class="pcoded-submenu">
         <li><a href="{% url 'google_maps' %}">Google</a></li>
         <li><a href="{% url 'vector_maps' %}">Vector</a></li>
@@ -623,43 +339,42 @@
     <li class="nav-item pcoded-menu-caption">
       <label>Pages</label>
     </li>
-    <li data-username="landing page" class="nav-item"><a href="{% url 'landing_page' %}" class="nav-link"><span
-            class="pcoded-micon"><i class="feather icon-navigation-2"></i></span><span
-            class="pcoded-mtext">Landing
+    <li data-username="landing page" class="nav-item"><a href="{% url 'landing_page' %}" class="nav-link"><span class="pcoded-micon"><i class="feather icon-navigation-2"></i></span><span
+          class="pcoded-mtext">Landing
           page</span></a></li>
     <li
-            data-username="Authentication Sign up Sign in reset password Change password Personal information profile settings map form subscribe"
-            class="nav-item pcoded-hasmenu">
+      data-username="Authentication Sign up Sign in reset password Change password Personal information profile settings map form subscribe"
+      class="nav-item pcoded-hasmenu">
       <a href="#" class="nav-link"><span class="pcoded-micon"><i class="feather icon-lock"></i></span><span
-              class="pcoded-mtext">Authentication</span><span class="pcoded-badge label label-danger">New</span></a>
+          class="pcoded-mtext">Authentication</span><span class="pcoded-badge label label-danger">New</span></a>
       <ul class="pcoded-submenu">
         <li><a href="{% url 'register_v1' %}" target="_blank">Sign up</a></li>
         <li><a href="{% url 'register_v2' %}" target="_blank">Sign up v2<span
-                class="pcoded-badge label label-primary">New</span></a></li>
+              class="pcoded-badge label label-primary">New</span></a></li>
         <li><a href="{% url 'register_v3' %}" target="_blank">Sign up v3<span
-                class="pcoded-badge label label-primary">New</span></a></li>
+              class="pcoded-badge label label-primary">New</span></a></li>
         <li><a href="{% url 'register_v4' %}" target="_blank">Sign up v4<span
-                class="pcoded-badge label label-primary">New</span></a></li>
+              class="pcoded-badge label label-primary">New</span></a></li>
         <li><a href="{% url 'register_v5' %}" target="_blank">Sign up v5<span
-                class="pcoded-badge label label-primary">New</span></a></li>
+              class="pcoded-badge label label-primary">New</span></a></li>
         <li><a href="{% url 'login_v1' %}" target="_blank">Sign in</a></li>
         <li><a href="{% url 'login_v2' %}" target="_blank">Sign in v2<span
-                class="pcoded-badge label label-primary">New</span></a></li>
+              class="pcoded-badge label label-primary">New</span></a></li>
         <li><a href="{% url 'login_v3' %}" target="_blank">Sign in v3<span
-                class="pcoded-badge label label-primary">New</span></a></li>
+              class="pcoded-badge label label-primary">New</span></a></li>
         <li><a href="{% url 'login_v4' %}" target="_blank">Sign in v4<span
-                class="pcoded-badge label label-primary">New</span></a></li>
+              class="pcoded-badge label label-primary">New</span></a></li>
         <li><a href="{% url 'login_v5' %}" target="_blank">Sign in v5<span
-                class="pcoded-badge label label-primary">New</span></a></li>
+              class="pcoded-badge label label-primary">New</span></a></li>
         <li><a href="{% url 'password_reset_v1' %}" target="_blank">Reset password</a></li>
         <li><a href="{% url 'password_reset_v2' %}" target="_blank">Reset password v2<span
-                class="pcoded-badge label label-primary">New</span></a></li>
+              class="pcoded-badge label label-primary">New</span></a></li>
         <li><a href="{% url 'password_reset_v3' %}" target="_blank">Reset password v3<span
-                class="pcoded-badge label label-primary">New</span></a></li>
+              class="pcoded-badge label label-primary">New</span></a></li>
         <li><a href="{% url 'password_reset_v4' %}" target="_blank">Reset password v4<span
-                class="pcoded-badge label label-primary">New</span></a></li>
+              class="pcoded-badge label label-primary">New</span></a></li>
         <li><a href="{% url 'password_reset_v5' %}" target="_blank">Reset password v5<span
-                class="pcoded-badge label label-primary">New</span></a></li>
+              class="pcoded-badge label label-primary">New</span></a></li>
         <li><a href="{% url 'change_password' %}">Change password</a></li>
         <li><a href="{% url 'personal_information' %}" target="_blank">Personal information</a></li>
         <li><a href="{% url 'profile_settings' %}" target="_blank">Profile settings</a></li>
@@ -669,7 +384,7 @@
     </li>
     <li data-username="Maintenance Error Comming soon offline ui" class="nav-item pcoded-hasmenu">
       <a href="#" class="nav-link"><span class="pcoded-micon"><i class="feather icon-sliders"></i></span><span
-              class="pcoded-mtext">Maintenance</span></a>
+          class="pcoded-mtext">Maintenance</span></a>
       <ul class="pcoded-submenu">
         <li><a href="{% url 'error' %}" target="_blank">Error</a></li>
         <li><a href="{% url 'coming_soon' %}" target="_blank">Maintenance</a></li>
@@ -680,11 +395,11 @@
       <label>App</label>
     </li>
     <li data-username="message" class="nav-item"><a href="{% url 'messages' %}" class="nav-link"><span
-            class="pcoded-micon"><i class="feather icon-message-circle"></i></span><span
-            class="pcoded-mtext">Message</span></a></li>
+          class="pcoded-micon"><i class="feather icon-message-circle"></i></span><span
+          class="pcoded-mtext">Message</span></a></li>
     <li data-username="Task list board details" class="nav-item pcoded-hasmenu">
       <a href="#" class="nav-link"><span class="pcoded-micon"><i class="feather icon-clipboard"></i></span><span
-              class="pcoded-mtext">Task</span></a>
+          class="pcoded-mtext">Task</span></a>
       <ul class="pcoded-submenu">
         <li><a href="{% url 'task_list' %}">List</a></li>
         <li><a href="{% url 'task_board' %}">Board</a></li>
@@ -693,7 +408,7 @@
     </li>
     <li data-username="To-Do notes" class="nav-item pcoded-hasmenu">
       <a href="#" class="nav-link"><span class="pcoded-micon"><i
-              class="feather icon-check-square"></i></span><span class="pcoded-mtext">To-Do</span></a>
+            class="feather icon-check-square"></i></span><span class="pcoded-mtext">To-Do</span></a>
       <ul class="pcoded-submenu">
         <li><a href="{% url 'todo' %}">To-Do</a></li>
         <!-- <li><a href="../apps/notes.html">Notes</a></li> -->
@@ -701,7 +416,7 @@
     </li>
     <li data-username="Gallery Grid Masonry Advance" class="nav-item pcoded-hasmenu">
       <a href="#" class="nav-link"><span class="pcoded-micon"><i class="feather icon-image"></i></span><span
-              class="pcoded-mtext">Gallery</span></a>
+          class="pcoded-mtext">Gallery</span></a>
       <ul class="pcoded-submenu">
         <li><a href="{% url 'gallery_grid' %}">Grid</a></li>
         <li><a href="{% url 'gallery_masonry' %}">Masonry</a></li>
@@ -713,7 +428,7 @@
     </li>
     <li data-username="Invoice Summury List" class="nav-item pcoded-hasmenu">
       <a href="#" class="nav-link"><span class="pcoded-micon"><i class="feather icon-file-minus"></i></span><span
-              class="pcoded-mtext">Invoice</span></a>
+          class="pcoded-mtext">Invoice</span></a>
       <ul class="pcoded-submenu">
         <li><a href="{% url 'invoice' %}">Invoice</a></li>
         <li><a href="{% url 'invoice_summary' %}">Invoice summary</a></li>
@@ -721,20 +436,15 @@
       </ul>
     </li>
     <li data-username="Full Calendar" class="nav-item"><a href="{% url 'full_calendar' %}"
-                                                          class="nav-link"><span class="pcoded-micon"><i
-            class="feather icon-calendar"></i></span><span
-            class="pcoded-mtext">Full
+        class="nav-link"><span class="pcoded-micon"><i class="feather icon-calendar"></i></span><span
+          class="pcoded-mtext">Full
           calendar</span></a></li>
     <li class="nav-item pcoded-menu-caption">
       <label>Other</label>
     </li>
     <li data-username="Menu levels Menu level 2.1 Menu level 2.2" class="nav-item pcoded-hasmenu">
-      <a href="#" class="nav-link">
-        <span class="pcoded-micon">
-          <i class="feather icon-menu"></i>
-        </span>
-        <span class="pcoded-mtext">Menu levels</span>
-      </a>
+      <a href="#" class="nav-link"><span class="pcoded-micon"><i class="feather icon-menu"></i></span><span
+          class="pcoded-mtext">Menu levels</span></a>
       <ul class="pcoded-submenu">
         <li><a href="">Menu Level 2.1</a></li>
         <li class="pcoded-hasmenu">
@@ -747,28 +457,11 @@
       </ul>
     </li>
     <li data-username="Disabled Menu" class="nav-item disabled"><a href="#" class="nav-link"><span
-            class="pcoded-micon"><i class="feather icon-power"></i></span><span class="pcoded-mtext">Disabled
+          class="pcoded-micon"><i class="feather icon-power"></i></span><span class="pcoded-mtext">Disabled
           menu</span></a></li>
     <li data-username="Sample Page" class="nav-item"><a href="{% url 'sample_page' %}" class="nav-link"><span
-            class="pcoded-micon"><i class="feather icon-sidebar"></i></span><span class="pcoded-mtext">Sample
+          class="pcoded-micon"><i class="feather icon-sidebar"></i></span><span class="pcoded-mtext">Sample
           page</span></a></li>
   {% endif %}
 
-  <li class="nav-item pcoded-menu-caption">
-    <label>Resources</label>
-  </li>
-  <li data-username="Need Support" class="nav-item">
-    <a href="https://appseed.us/product/datta-able-pro/django/" class="nav-link" target="_blank">
-      <span class="pcoded-micon">
-        <i class="feather icon-download"></i>
-      </span>
-      <span class="pcoded-mtext">Download</span></a>
-  </li>
-  <li data-username="Need Support" class="nav-item">
-    <a href="https://appseed.us/support/" class="nav-link" target="_blank">
-      <span class="pcoded-micon">
-        <i class="feather icon-help-circle"></i>
-      </span>
-      <span class="pcoded-mtext">Support</span></a>
-  </li>
 </ul>

@@ -21,7 +21,7 @@
   <div class="collapse navbar-collapse">
     <ul class="navbar-nav me-auto">
       <li><a href="#!" class="full-screen" onclick="javascript:toggleFullScreen()"><i
-            class="feather icon-maximize"></i></a></li>
+        class="feather icon-maximize"></i></a></li>
       <li class="nav-item dropdown">
         <a class="dropdown-toggle" href="#" data-bs-toggle="dropdown">Market Type</a>
         <ul class="dropdown-menu">
@@ -36,47 +36,57 @@
           <li><a class="dropdown-item" href="#!">Ultra Grid</a></li>
         </ul>
       </li>
-{#      <li class="nav-item">#}
-{#        <div class="main-search">#}
-{#          <div class="input-group">#}
-{#            <input type="text" id="m-search" class="form-control" placeholder="Search . . .">#}
-{#            <a href="#!" class="input-group-append search-close">#}
-{#              <i class="feather icon-x input-group-text"></i>#}
-{#            </a>#}
-{#            <span class="input-group-append search-btn btn btn-primary">#}
-{#              <i class="feather icon-search input-group-text"></i>#}
-{#            </span>#}
-{#          </div>#}
-{#        </div>#}
-{#      </li>#}
+      <li class="nav-item dropdown">
+        <a class="dropdown-toggle" href="#" data-bs-toggle="dropdown">Exchange Type</a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="#!">Binance</a></li>
+          <li><a class="dropdown-item" href="#!">Kucoin</a></li>
+          <li><a class="dropdown-item" href="#!">Mexc</a></li>
+          <li><a class="dropdown-item" href="#!">Bingx</a></li>
+        </ul>
+      </li>
+      {#      <li class="nav-item">#}
+      {#        <div class="main-search">#}
+      {#          <div class="input-group">#}
+      {#            <input type="text" id="m-search" class="form-control" placeholder="Search . . .">#}
+      {#            <a href="#!" class="input-group-append search-close">#}
+      {#              <i class="feather icon-x input-group-text"></i>#}
+      {#            </a>#}
+      {#            <span class="input-group-append search-btn btn btn-primary">#}
+      {#              <i class="feather icon-search input-group-text"></i>#}
+      {#            </span>#}
+      {#          </div>#}
+      {#        </div>#}
+      {#      </li>#}
     </ul>
     <ul class="navbar-nav ms-auto">
       {% if 'i18n' in request.get_full_path %}
-      <li>
-        <div class="dropdown drp-user">
-          <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
-            <i class="icon feather icon-globe"></i>
-          </a>
-          <div class="dropdown-menu dropdown-menu-end profile-notification">
-            <ul class="pro-body">
-              {% for language in languages %}
-              <form class="mb-3" action="{% url 'set_language' %}" method="post">
-                {% csrf_token %}
-                <input type="hidden" name="language" value="{{ language.code }}">
-                <button type="submit" class="dropdown-item">
-                  <i class="feather icon-flag me-2"></i>
-                  <span>{{ language.name }}</span>
-                </button>
-              </form>
-              {% endfor %}
-            </ul>
+        <li>
+          <div class="dropdown drp-user">
+            <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
+              <i class="icon feather icon-globe"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-end profile-notification">
+              <ul class="pro-body">
+                {% for language in languages %}
+                  <form class="mb-3" action="{% url 'set_language' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="language" value="{{ language.code }}">
+                    <button type="submit" class="dropdown-item">
+                      <i class="feather icon-flag me-2"></i>
+                      <span>{{ language.name }}</span>
+                    </button>
+                  </form>
+                {% endfor %}
+              </ul>
+            </div>
           </div>
-        </div>
-      </li>
+        </li>
       {% endif %}
 
       <li class="layout-type">
-        <a data-value="dark" data-bs-toggle="tooltip" href="{% url "change_mode" %}"><i class="icon feather icon-sun"></i></a>
+        <a data-value="dark" data-bs-toggle="tooltip" href="{% url "change_mode" %}"><i
+          class="icon feather icon-sun"></i></a>
       </li>
 
       <li>
@@ -96,10 +106,11 @@
               </li>
               <li class="notification">
                 <div class="media">
-                  <img class="img-radius" src="{% static 'assets/images/user/avatar-1.jpg' %}" alt="Generic placeholder image">
+                  <img class="img-radius" src="{% static 'assets/images/user/avatar-1.jpg' %}"
+                       alt="Generic placeholder image">
                   <div class="media-body">
                     <p><strong>John Doe</strong><span class="n-time text-muted"><i
-                          class="icon feather icon-clock m-r-10"></i>30 min</span></p>
+                      class="icon feather icon-clock m-r-10"></i>30 min</span></p>
                     <p>New ticket Added</p>
                   </div>
                 </div>
@@ -109,20 +120,22 @@
               </li>
               <li class="notification">
                 <div class="media">
-                  <img class="img-radius" src="{% static 'assets/images/user/avatar-2.jpg' %}" alt="Generic placeholder image">
+                  <img class="img-radius" src="{% static 'assets/images/user/avatar-2.jpg' %}"
+                       alt="Generic placeholder image">
                   <div class="media-body">
                     <p><strong>Joseph William</strong><span class="n-time text-muted"><i
-                          class="icon feather icon-clock m-r-10"></i>30 min</span></p>
+                      class="icon feather icon-clock m-r-10"></i>30 min</span></p>
                     <p>Prchace New Theme and make payment</p>
                   </div>
                 </div>
               </li>
               <li class="notification">
                 <div class="media">
-                  <img class="img-radius" src="{% static 'assets/images/user/avatar-3.jpg' %}" alt="Generic placeholder image">
+                  <img class="img-radius" src="{% static 'assets/images/user/avatar-3.jpg' %}"
+                       alt="Generic placeholder image">
                   <div class="media-body">
                     <p><strong>Sara Soudein</strong><span class="n-time text-muted"><i
-                          class="icon feather icon-clock m-r-10"></i>30 min</span></p>
+                      class="icon feather icon-clock m-r-10"></i>30 min</span></p>
                     <p>currently login</p>
                   </div>
                 </div>
@@ -134,7 +147,7 @@
           </div>
         </div>
       </li>
-{#      <li><a href="#!" class="displayChatbox"><i class="icon feather icon-mail"></i></a></li>#}
+      {#      <li><a href="#!" class="displayChatbox"><i class="icon feather icon-mail"></i></a></li>#}
       <li>
         <div class="dropdown drp-user">
           <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
@@ -148,22 +161,24 @@
                 <img class="img-radius" src="{% static 'assets/images/user/avatar-5.jpg' %}" alt="User image">
               {% endif %}
               <span>
-                {% if request.user.profile.full_name %} {{request.user.profile.full_name}} {% else %} {{ request.user.username }} {% endif %}
+                {% if request.user.profile.full_name %} {{ request.user.profile.full_name }} {% else %}
+                  {{ request.user.username }} {% endif %}
               </span>
               {% if request.user.is_superuser %}
-              <a href="{% url 'admin:logout' %}" class="dud-logout" title="Logout">
+                <a href="{% url 'admin:logout' %}" class="dud-logout" title="Logout">
               {% else %}
-              <a href="{% url 'logout' %}" class="dud-logout" title="Logout">
+                <a href="{% url 'logout' %}" class="dud-logout" title="Logout">
               {% endif %}
-                <i class="feather icon-log-out"></i>
+              <i class="feather icon-log-out"></i>
               </a>
             </div>
             <ul class="pro-body">
               <li><a href="{% url "profile" %}" class="dropdown-item"><i class="feather icon-user"></i> Profile</a></li>
-              <li><a href="{% url 'messages' %}" class="dropdown-item"><i class="feather icon-mail"></i> My Messages</a></li>
+              <li><a href="{% url 'messages' %}" class="dropdown-item"><i class="feather icon-mail"></i> My Messages</a>
               </li>
               {% if request.user.is_superuser %}
-              <li><a href="{% url 'admin:password_change' %}" class="dropdown-item"><i class="feather icon-mail"></i> Change Password</a></li>
+                <li><a href="{% url 'admin:password_change' %}" class="dropdown-item"><i class="feather icon-mail"></i>
+                  Change Password</a></li>
               {% endif %}
             </ul>
           </div>
@@ -187,7 +202,8 @@
       <div class="main-friend-list">
         <div class="media userlist-box" data-id="1" data-status="online" data-username="Josephin Doe">
           <a class="media-left" href="#!"><img class="media-object img-radius"
-              src="{% static 'assets/images/user/avatar-1.jpg' %}" alt="Generic placeholder image ">
+                                               src="{% static 'assets/images/user/avatar-1.jpg' %}"
+                                               alt="Generic placeholder image ">
             <div class="live-status">3</div>
           </a>
           <div class="media-body">
@@ -196,7 +212,8 @@
         </div>
         <div class="media userlist-box" data-id="2" data-status="online" data-username="Lary Doe">
           <a class="media-left" href="#!"><img class="media-object img-radius"
-              src="{% static 'assets/images/user/avatar-2.jpg' %}" alt="Generic placeholder image">
+                                               src="{% static 'assets/images/user/avatar-2.jpg' %}"
+                                               alt="Generic placeholder image">
             <div class="live-status">1</div>
           </a>
           <div class="media-body">
@@ -205,14 +222,16 @@
         </div>
         <div class="media userlist-box" data-id="3" data-status="online" data-username="Alice">
           <a class="media-left" href="#!"><img class="media-object img-radius"
-              src="{% static 'assets/images/user/avatar-3.jpg' %}" alt="Generic placeholder image"></a>
+                                               src="{% static 'assets/images/user/avatar-3.jpg' %}"
+                                               alt="Generic placeholder image"></a>
           <div class="media-body">
             <h6 class="chat-header">Alice<small class="d-block text-c-green">online</small></h6>
           </div>
         </div>
         <div class="media userlist-box" data-id="4" data-status="offline" data-username="Alia">
           <a class="media-left" href="#!"><img class="media-object img-radius"
-              src="{% static 'assets/images/user/avatar-1.jpg' %}" alt="Generic placeholder image">
+                                               src="{% static 'assets/images/user/avatar-1.jpg' %}"
+                                               alt="Generic placeholder image">
             <div class="live-status">1</div>
           </a>
           <div class="media-body">
@@ -221,14 +240,16 @@
         </div>
         <div class="media userlist-box" data-id="5" data-status="offline" data-username="Suzen">
           <a class="media-left" href="#!"><img class="media-object img-radius"
-              src="{% static 'assets/images/user/avatar-4.jpg' %}" alt="Generic placeholder image"></a>
+                                               src="{% static 'assets/images/user/avatar-4.jpg' %}"
+                                               alt="Generic placeholder image"></a>
           <div class="media-body">
             <h6 class="chat-header">Suzen<small class="d-block text-muted">15 min ago</small></h6>
           </div>
         </div>
         <div class="media userlist-box" data-id="1" data-status="online" data-username="Josephin Doe">
           <a class="media-left" href="#!"><img class="media-object img-radius"
-              src="{% static 'assets/images/user/avatar-1.jpg' %}" alt="Generic placeholder image ">
+                                               src="{% static 'assets/images/user/avatar-1.jpg' %}"
+                                               alt="Generic placeholder image ">
             <div class="live-status">3</div>
           </a>
           <div class="media-body">
@@ -237,7 +258,8 @@
         </div>
         <div class="media userlist-box" data-id="2" data-status="online" data-username="Lary Doe">
           <a class="media-left" href="#!"><img class="media-object img-radius"
-              src="{% static 'assets/images/user/avatar-2.jpg' %}" alt="Generic placeholder image">
+                                               src="{% static 'assets/images/user/avatar-2.jpg' %}"
+                                               alt="Generic placeholder image">
             <div class="live-status">1</div>
           </a>
           <div class="media-body">
@@ -246,14 +268,16 @@
         </div>
         <div class="media userlist-box" data-id="3" data-status="online" data-username="Alice">
           <a class="media-left" href="#!"><img class="media-object img-radius"
-              src="{% static 'assets/images/user/avatar-3.jpg' %}" alt="Generic placeholder image"></a>
+                                               src="{% static 'assets/images/user/avatar-3.jpg' %}"
+                                               alt="Generic placeholder image"></a>
           <div class="media-body">
             <h6 class="chat-header">Alice<small class="d-block text-c-green">online</small></h6>
           </div>
         </div>
         <div class="media userlist-box" data-id="4" data-status="offline" data-username="Alia">
           <a class="media-left" href="#!"><img class="media-object img-radius"
-              src="{% static 'assets/images/user/avatar-1.jpg' %}" alt="Generic placeholder image">
+                                               src="{% static 'assets/images/user/avatar-1.jpg' %}"
+                                               alt="Generic placeholder image">
             <div class="live-status">1</div>
           </a>
           <div class="media-body">
@@ -262,14 +286,16 @@
         </div>
         <div class="media userlist-box" data-id="5" data-status="offline" data-username="Suzen">
           <a class="media-left" href="#!"><img class="media-object img-radius"
-              src="{% static 'assets/images/user/avatar-4.jpg' %}" alt="Generic placeholder image"></a>
+                                               src="{% static 'assets/images/user/avatar-4.jpg' %}"
+                                               alt="Generic placeholder image"></a>
           <div class="media-body">
             <h6 class="chat-header">Suzen<small class="d-block text-muted">15 min ago</small></h6>
           </div>
         </div>
         <div class="media userlist-box" data-id="1" data-status="online" data-username="Josephin Doe">
           <a class="media-left" href="#!"><img class="media-object img-radius"
-              src="{% static 'assets/images/user/avatar-1.jpg' %}" alt="Generic placeholder image ">
+                                               src="{% static 'assets/images/user/avatar-1.jpg' %}"
+                                               alt="Generic placeholder image ">
             <div class="live-status">3</div>
           </a>
           <div class="media-body">
@@ -278,7 +304,8 @@
         </div>
         <div class="media userlist-box" data-id="2" data-status="online" data-username="Lary Doe">
           <a class="media-left" href="#!"><img class="media-object img-radius"
-              src="{% static 'assets/images/user/avatar-2.jpg' %}" alt="Generic placeholder image">
+                                               src="{% static 'assets/images/user/avatar-2.jpg' %}"
+                                               alt="Generic placeholder image">
             <div class="live-status">1</div>
           </a>
           <div class="media-body">
@@ -287,14 +314,16 @@
         </div>
         <div class="media userlist-box" data-id="3" data-status="online" data-username="Alice">
           <a class="media-left" href="#!"><img class="media-object img-radius"
-              src="{% static 'assets/images/user/avatar-3.jpg' %}" alt="Generic placeholder image"></a>
+                                               src="{% static 'assets/images/user/avatar-3.jpg' %}"
+                                               alt="Generic placeholder image"></a>
           <div class="media-body">
             <h6 class="chat-header">Alice<small class="d-block text-c-green">online</small></h6>
           </div>
         </div>
         <div class="media userlist-box" data-id="4" data-status="offline" data-username="Alia">
           <a class="media-left" href="#!"><img class="media-object img-radius"
-              src="{% static 'assets/images/user/avatar-1.jpg' %}" alt="Generic placeholder image">
+                                               src="{% static 'assets/images/user/avatar-1.jpg' %}"
+                                               alt="Generic placeholder image">
             <div class="live-status">1</div>
           </a>
           <div class="media-body">
@@ -303,14 +332,16 @@
         </div>
         <div class="media userlist-box" data-id="5" data-status="offline" data-username="Suzen">
           <a class="media-left" href="#!"><img class="media-object img-radius"
-              src="{% static 'assets/images/user/avatar-4.jpg' %}" alt="Generic placeholder image"></a>
+                                               src="{% static 'assets/images/user/avatar-4.jpg' %}"
+                                               alt="Generic placeholder image"></a>
           <div class="media-body">
             <h6 class="chat-header">Suzen<small class="d-block text-muted">15 min ago</small></h6>
           </div>
         </div>
         <div class="media userlist-box" data-id="1" data-status="online" data-username="Josephin Doe">
           <a class="media-left" href="#!"><img class="media-object img-radius"
-              src="{% static 'assets/images/user/avatar-1.jpg' %}" alt="Generic placeholder image ">
+                                               src="{% static 'assets/images/user/avatar-1.jpg' %}"
+                                               alt="Generic placeholder image ">
             <div class="live-status">3</div>
           </a>
           <div class="media-body">
@@ -319,7 +350,8 @@
         </div>
         <div class="media userlist-box" data-id="2" data-status="online" data-username="Lary Doe">
           <a class="media-left" href="#!"><img class="media-object img-radius"
-              src="{% static 'assets/images/user/avatar-2.jpg' %}" alt="Generic placeholder image">
+                                               src="{% static 'assets/images/user/avatar-2.jpg' %}"
+                                               alt="Generic placeholder image">
             <div class="live-status">1</div>
           </a>
           <div class="media-body">
@@ -328,14 +360,16 @@
         </div>
         <div class="media userlist-box" data-id="3" data-status="online" data-username="Alice">
           <a class="media-left" href="#!"><img class="media-object img-radius"
-              src="{% static 'assets/images/user/avatar-3.jpg' %}" alt="Generic placeholder image"></a>
+                                               src="{% static 'assets/images/user/avatar-3.jpg' %}"
+                                               alt="Generic placeholder image"></a>
           <div class="media-body">
             <h6 class="chat-header">Alice<small class="d-block text-c-green">online</small></h6>
           </div>
         </div>
         <div class="media userlist-box" data-id="4" data-status="offline" data-username="Alia">
           <a class="media-left" href="#!"><img class="media-object img-radius"
-              src="{% static 'assets/images/user/avatar-1.jpg' %}" alt="Generic placeholder image">
+                                               src="{% static 'assets/images/user/avatar-1.jpg' %}"
+                                               alt="Generic placeholder image">
             <div class="live-status">1</div>
           </a>
           <div class="media-body">
@@ -344,7 +378,8 @@
         </div>
         <div class="media userlist-box" data-id="5" data-status="offline" data-username="Suzen">
           <a class="media-left" href="#!"><img class="media-object img-radius"
-              src="{% static 'assets/images/user/avatar-4.jpg' %}" alt="Generic placeholder image"></a>
+                                               src="{% static 'assets/images/user/avatar-4.jpg' %}"
+                                               alt="Generic placeholder image"></a>
           <div class="media-body">
             <h6 class="chat-header">Suzen<small class="d-block text-muted">15 min ago</small></h6>
           </div>
@@ -366,7 +401,8 @@
       <div class="main-friend-chat">
         <div class="media chat-messages">
           <a class="media-left photo-table" href="#!"><img class="media-object img-radius img-radius m-t-5"
-              src="{% static 'assets/images/user/avatar-2.jpg' %}" alt="Generic placeholder image"></a>
+                                                           src="{% static 'assets/images/user/avatar-2.jpg' %}"
+                                                           alt="Generic placeholder image"></a>
           <div class="media-body chat-menu-content">
             <div class="">
               <p class="chat-cont">hello Datta! Will you tell me something</p>
@@ -385,7 +421,8 @@
         </div>
         <div class="media chat-messages">
           <a class="media-left photo-table" href="#!"><img class="media-object img-radius img-radius m-t-5"
-              src="{% static 'assets/images/user/avatar-2.jpg' %}" alt="Generic placeholder image"></a>
+                                                           src="{% static 'assets/images/user/avatar-2.jpg' %}"
+                                                           alt="Generic placeholder image"></a>
           <div class="media-body chat-menu-content">
             <div class="">
               <p class="chat-cont">can you help me?</p>

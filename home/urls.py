@@ -4,8 +4,6 @@ from django.contrib.auth import views as auth_views
 from django.urls import path, include, re_path
 
 urlpatterns = [
-  path('', include('home.home_urls.api')),
-
   # Dashboard
   path('', views.default, name='index'),
   path('dashboard/ecommerce/', views.dashboard_ecommerce, name='dashboard_ecommerce'),

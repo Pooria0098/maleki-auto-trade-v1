@@ -213,7 +213,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = '/'
 
-AUTH_USER_MODEL = "home.User"
+AUTH_USER_MODEL = "users.User"
 
 # AllAuth
 ACCOUNT_EMAIL_VERIFICATION =  os.getenv('ACCOUNT_EMAIL_VERIFICATION', 'none')
