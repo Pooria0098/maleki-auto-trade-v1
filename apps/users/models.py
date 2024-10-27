@@ -8,7 +8,17 @@ from django.contrib.auth.models import AbstractUser
 
 class ApiModType(models.IntegerChoices):
     Hedge = 0
-    OneWay = 1
+    Oneway = 1
+
+
+class MarketType(models.IntegerChoices):
+    Futures = 0,
+    Spot = 1
+
+
+class ApiStatus(models.IntegerChoices):
+    Active = 0,
+    Deactive = 1,
 
 
 class DataModel(models.Model):
@@ -37,11 +47,15 @@ class Exchange(DataModel):
 class API(DataModel):
     user = models.ForeignKey('User', on_delete=models.CASCADE)
     exchange = models.OneToOneField(Exchange, on_delete=models.CASCADE)
+    market_type = models.IntegerField(choices=MarketType.choices, default=MarketType.Futures)
     api_name = models.CharField(max_length=128)
     api_key = models.CharField(max_length=512)
     secret_key = models.CharField(max_length=512)
     secret_key_hashed = models.CharField(max_length=512)
     api_mode = models.IntegerField(choices=ApiModType.choices, default=ApiModType.Hedge)
+    expire_date = models.DateTimeField(blank=True, null=True)
+    balance = models.FloatField(default=0)
+    status = models.IntegerField(choices=ApiStatus.choices, default=ApiStatus.Deactive)
 
     class Meta:
         unique_together = ('api_name', 'api_key', 'secret_key')
@@ -63,6 +77,7 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
 
 
+#############################################################################################################
 # Create your models here.
 
 ROLE_CHOICES = (

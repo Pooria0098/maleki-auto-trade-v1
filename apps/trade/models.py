@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-User = get_user_model()
 
+User = get_user_model()
 
 
 ####################### Unions #######################
@@ -83,12 +83,18 @@ class System(DataModel):
     creator = models.ForeignKey(User, on_delete=models.PROTECT)
     system_name = models.CharField(max_length=256, unique=True)
     currency = models.ForeignKey(Currency, on_delete=models.CASCADE)
+    leverage = models.IntegerField(default=0, null=True)
     system_fund_rate = models.FloatField(default=0)
     system_balance = models.FloatField(default=0, null=True, blank=True)
     status = models.IntegerField(choices=SystemStatus.choices, default=SystemStatus.Running)
     buy_is_enabled = models.BooleanField(default=True)
     sell_is_enabled = models.BooleanField(default=True)
+    start_time = models.DateTimeField(null=True, blank=True)
     err_msg = models.TextField()
+    is_in_market_place = models.BooleanField(default=False)
+    stop_loss_is_enabled = models.BooleanField(default=False)
+    profit_amount = models.FloatField(default=0)
+    profit_percentages = models.FloatField(default=0)
 
     class Meta:
         abstract = True
@@ -122,9 +128,9 @@ class ExchangeOrder(DataModel):
 
 ####################### UltraDCA #######################
 class UltraDCASystem(System):
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField(blank=True, null=True)  # todo: this must fill when hit stop button
     engine_number = models.PositiveIntegerField(default=0)
+    order_number = models.PositiveIntegerField(default=0)
+    heavy_shedding_is_enabled = models.BooleanField(default=False)  # ریزش سنگین
 
     def __str__(self):
         return f"{self.system_name}"
@@ -181,8 +187,8 @@ class UltraDCAExchangeOrder(ExchangeOrder):
 
 ####################### UltraGrid #######################
 class UltraGridSystem(System):
-    order_number = models.PositiveIntegerField(default=0)
     part_number = models.PositiveIntegerField(default=0)
+    order_number = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return f"{self.system_name}"

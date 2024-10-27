@@ -1,0 +1,264 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block extrastyle %}
+  <!-- data tables css -->
+  <link rel="stylesheet" href="{% static 'assets/css/plugins/dataTables.bootstrap5.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/plugins/buttons.bootstrap5.min.css' %}">
+
+  <style>
+    .filter-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 20px;
+    }
+
+    .filter-item {
+      display: flex;
+      flex-direction: column;
+    }
+  </style>
+{% endblock extrastyle %}
+
+{% block content %}
+  <div class="row">
+    <!-- Scroll - Vertical, Dynamic Height table start -->
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-header">
+          <h5>Api's</h5>
+          <small>Show List of API's</small>
+        </div>
+        <div class="card-body">
+          <div class="dt-responsive table-responsive">
+            <a href="{% url 'users:api_create' %}" class="btn btn-success"><i class="fas fa-plus"></i>Add New API</a>
+          </div>
+
+          <div class="dt-responsive table-responsive">
+            <div class="filter-container">
+              <div class="filter-item">
+                <label for="api_mode">API Mode:</label>
+                <select class="form-control" id="api_mode">
+                  <option value="">All Modes</option>
+                  <option value="Hedge">Hedge</option>
+                  <option value="Oneway">Oneway</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <label for="market_type">Market Type:</label>
+                <select class="form-control" id="market_type">
+                  <option value="">All Types</option>
+                  <option value="Futures">Futures</option>
+                  <option value="Spot">Spot</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <label for="exchange">Exchange:</label>
+                <input class="form-control" type="text" id="exchange" name="exchange">
+              </div>
+              <div class="filter-item">
+                <label for="status">Status:</label>
+                <select class="form-control" id="status">
+                  <option value="">All Statuses</option>
+                  <option value="Active">Active</option>
+                  <option value="Deactive">Deactive</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <label for="created_at">Created At Grater Than:</label>
+                <input class="form-control" type="date" id="created_at" name="created_at">
+              </div>
+              <div class="filter-item">
+                <label for="expire_date">Expire Date Less Than:</label>
+                <input class="form-control" type="date" id="expire_date" name="expire_date">
+              </div>
+              <div class="filter-item">
+                <label for="min_balance">Minimum Balance:</label>
+                <input class="form-control" type="number" id="min_balance" name="min">
+              </div>
+              <div class="filter-item">
+                <label for="max_balance">Maximum Balance:</label>
+                <input class="form-control" type="number" id="max_balance" name="max">
+              </div>
+            </div>
+          </div>
+
+          <div class="dt-responsive table-responsive">
+            <table id="alt-pg-dt" class="table table-striped table-hover table-bordered nowrap">
+              <thead>
+              <tr>
+                <th>#</th>
+                <th>api_name</th>
+                <th>api_mode</th>
+                <th>market_type</th>
+                <th>exchange</th>
+                <th>balance</th>
+                <th>status</th>
+                <th>created_at</th>
+                <th>expire_date</th>
+                <th>api_key</th>
+                {#                <th>secret_key</th>#}
+                <th>secret_key</th>
+                <th>Actions</th>
+              </tr>
+              </thead>
+              <tbody>
+              {% if api_list %}
+                {% for api in api_list %}
+                  {% with counter=forloop.counter %}
+                    <tr>
+                      <th scope="row">{{ counter }}</th>
+                      <td>
+                        <a href="{% url 'users:api_update' api.id %}">
+                          {{ api.api_name }}
+                        </a>
+                      </td>
+                      <td>{{ api.get_api_mode_display }}</td>
+                      <td>{{ api.get_market_type_display }}</td>
+                      <td>{{ api.exchange }}</td>
+                      <td>{{ api.balance }}</td>
+                      <td>
+                        {% if not api.status %}
+                          <a href="#!" class="label theme-bg f-12 text-white">{{ api.get_status_display }}</a>
+                        {% else %}
+                          <a href="#!" class="label theme-bg2 f-12 text-white">{{ api.get_status_display }}</a>
+                        {% endif %}
+                      </td>
+                      <td>{{ api.created_at|date:"m/d/Y" }}</td>
+                      <td>{{ api.expire_date|date:"m/d/Y" }}</td>
+                      <td>{{ api.api_key|truncatechars:30 }}</td>
+                      {#                      <td>{{ api.secret_key|truncatechars:10 }}</td>#}
+                      <td>{{ api.secret_key_hashed|truncatechars:30 }}</td>
+                      <td>
+                        <div class="d-flex justify-content-between">
+                          {% if api.status %}
+                            <form method="post" action="{% url 'users:api_update_active' api.id %}">
+                              {% csrf_token %}
+                              <button class="text-warning" title="make active"><i
+                                  class="fas fa-pause fa-1x"></i></button>
+                            </form>
+                          {% else %}
+                            <form method="post" action="{% url 'users:api_update_deactive' api.id %}">
+                              {% csrf_token %}
+                              <button class="text-success" title="make deactive"><i
+                                  class="fas fa-play fa-1x"></i></button>
+                            </form>
+                          {% endif %}
+                          <form method="get" action="{% url 'users:api_update' api.id %}">
+                            <button class="text-info" title="see detail"><i class="fas fa-eye fa-1x"></i>
+                            </button>
+                          </form>
+                          <form method="post" action='.'>
+                            <button class="text-success" title="connect to exchange"><i
+                                class="fas fa-exchange-alt fa-1x"></i>
+                            </button>
+                          </form>
+                        </div>
+                        {#                        <a href="#" class="text-danger"><i class="fas fa-trash-alt fa-1x"></i></a>#}
+                      </td>
+                    </tr>
+                  {% endwith %}
+                {% endfor %}
+              {% else %}
+                <tr>
+                  <td style="text-align: center">
+                    Not Found!
+                  </td>
+                </tr>
+              {% endif %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Scroll - Vertical, Dynamic Height table end -->
+  </div>
+{% endblock content %}
+
+{% block extra_js %}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="{% static 'assets/js/plugins/jquery.dataTables.min.js' %}"></script>
+  <script src="{% static 'assets/js/plugins/dataTables.bootstrap5.min.js' %}"></script>
+  <script src="{% static 'assets/js/plugins/dataTables.buttons.min.js' %}"></script>
+  <script src="{% static 'assets/js/plugins/buttons.colVis.min.js' %}"></script>
+  <script src="{% static 'assets/js/plugins/buttons.print.min.js' %}"></script>
+  <script src="{% static 'assets/js/plugins/pdfmake.min.js' %}"></script>
+  <script src="{% static 'assets/js/plugins/jszip.min.js' %}"></script>
+  <script src="{% static 'assets/js/plugins/buttons.bootstrap5.min.js' %}"></script>
+  <script src="{% static 'assets/js/plugins/buttons.html5.min.js' %}"></script>
+  <script src="{% static 'assets/js/plugins/vfs_fonts.js' %}"></script>
+
+  <script>
+      $(document).ready(function () {
+          var table = $('#alt-pg-dt').DataTable({
+              "pagingType": "full_numbers",
+              dom: 'Bfrtip',
+              buttons: [{
+                  extend: 'copyHtml5',
+                  exportOptions: {
+                      columns: ':visible'
+                  }
+              }, {
+                  extend: 'excelHtml5',
+                  exportOptions: {
+                      columns: ':visible'
+                  }
+              }, {
+                  extend: 'pdfHtml5',
+                  exportOptions: {
+                      columns: ':visible'
+                  }
+              }, {
+                  text: 'JSON',
+                  action: function (e, dt, button, config) {
+                      var data = dt.buttons.exportData();
+                      $.fn.dataTable.fileSave(new Blob([JSON.stringify(data)]), 'Export.json');
+                  }
+              }, 'colvis']
+          });
+
+          // Custom filtering function for all filters
+          $.fn.dataTable.ext.search.push(
+              function (settings, data, dataIndex) {
+                  var minBalance = parseFloat($('#min_balance').val()) || -Infinity;
+                  var maxBalance = parseFloat($('#max_balance').val()) || Infinity;
+                  var balance = parseFloat(data[5]) || 0;
+
+                  var apiMode = $('#api_mode').val();
+                  var marketType = $('#market_type').val();
+                  var exchange = $('#exchange').val().toLowerCase();
+                  var status = $('#status').val();
+
+                  var createdAt = $('#created_at').val();
+                  var expireDate = $('#expire_date').val();
+                  var createdAtParts = data[7].split('/');
+                  var rowCreatedAt = new Date(createdAtParts[2], createdAtParts[0] - 1, createdAtParts[1]); // YYYY, MM-1, DD
+                  var expireDateParts = data[8].split('/');
+                  var rowExpireDate = new Date(expireDateParts[2], expireDateParts[0] - 1, expireDateParts[1]); // YYYY, MM-1, DD
+
+                  // Check each condition, converting datetime strings to Date objects for comparison
+                  if (
+                      balance >= minBalance &&
+                      balance <= maxBalance &&
+                      (apiMode === "" || data[2] === apiMode) &&
+                      (marketType === "" || data[3] === marketType) &&
+                      (exchange === "" || data[4].toLowerCase().includes(exchange)) &&
+                      (status === "" || data[6] === status) &&
+                      (createdAt === "" || new Date(createdAt) <= rowCreatedAt) &&
+                      (expireDate === "" || new Date(expireDate) >= rowExpireDate)
+                  ) {
+                      return true;
+                  }
+                  return false;
+              }
+          );
+
+          // Attach events to filter inputs
+          $('#min_balance, #max_balance, #api_mode, #market_type, #exchange, #status, #created_at, #expire_date').on('keyup change', function () {
+              table.draw();
+          });
+      });
+  </script>
+{% endblock extra_js %}

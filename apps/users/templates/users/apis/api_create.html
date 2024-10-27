@@ -1,0 +1,139 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block content %}
+  <div class="row">
+
+  <!-- [ form-element ] start -->
+  <div class="col-sm-12">
+    <!-- Basic Inputs -->
+    <div class="card">
+      <div class="card-header">
+        <h5>API</h5>
+      </div>
+      {#      <form class="validate-me" id="validate-me" method="post" action="." data-validate>#}
+      <form class="needs-validation" method="post" action="." novalidate>
+        {% csrf_token %}
+        <div class="card-body">
+
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                </button>
+                <h5 class="alert-heading">
+                  <i class="feather icon-alert-circle me-2"></i>
+                </h5>
+                <p class="mb-0">{{ message }}</p>
+              </div>
+            {% endfor %}
+          {% endif %}
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="form-label" for="id_{{ form.api_name.name }}">
+                  {{ form.api_name.label }}
+                  {% if form.api_name.field.required %}<span class="text-danger">*</span> {% endif %}
+                </label>
+                {{ form.api_name }}
+                <small class="form-text text-danger">{{ form.api_name.errors }}</small>
+              </div>
+              {#              <span class="text-danger">{{ form.api_name.errors }}</span>#}
+
+              <div class="form-group">
+                <label class="form-label" for="id_{{ form.exchange.name }}">
+                  {{ form.exchange.label }}
+                  {% if form.exchange.field.required %}<span class="text-danger">*</span> {% endif %}
+                </label>
+                {{ form.exchange }}
+                <small class="form-text text-danger">{{ form.exchange.errors }}</small>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="form-label" for="id_{{ form.market_type.name }}">
+                  {{ form.market_type.label }}
+                  {% if form.market_type.field.required %}<span class="text-danger">*</span> {% endif %}
+                </label>
+                {{ form.market_type }}
+                <small class="form-text text-danger">{{ form.market_type.errors }}</small>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="id_{{ form.api_mode.name }}">
+                  {{ form.api_mode.label }}
+                  {% if form.api_mode.field.required %}<span class="text-danger">*</span> {% endif %}
+                </label>
+                {{ form.api_mode }}
+                <small class="form-text text-danger">{{ form.api_mode.errors }}</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="id_{{ form.api_key.name }}">
+              {{ form.api_key.label }}
+              {% if form.api_key.field.required %}<span class="text-danger">*</span> {% endif %}
+            </label>
+            {{ form.api_key }}
+            <small class="form-text text-danger">{{ form.api_key.errors }}</small>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="id_{{ form.secret_key_hashed.name }}">
+              {{ form.secret_key_hashed.label }}
+              {% if form.secret_key_hashed.field.required %}<span class="text-danger">*</span> {% endif %}
+            </label>
+            {{ form.secret_key_hashed }}
+            <small class="form-text text-danger">{{ form.secret_key_hashed.errors }}</small>
+          </div>
+
+        </div>
+
+        <div class="card-footer">
+          <button class="btn btn-primary me-2">Submit</button>
+          <button type="reset" class="btn btn-light">Reset</button>
+          <button id="" class="btn btn-info">Connect to Exchange</button>
+        </div>
+      </form>
+    </div>
+    <!-- [ form-element ] end -->
+  </div>
+  <!-- [ Main Content ] end -->
+{% endblock content %}
+
+{% block extra_js %}
+  <script>
+      // Example starter JavaScript for disabling form submissions if there are invalid fields
+      (function () {
+          'use strict';
+          window.addEventListener('load', function () {
+              // Fetch all the forms we want to apply custom Bootstrap validation styles to
+              var forms = document.getElementsByClassName(
+                  'needs-validation');
+              // Loop over them and prevent submission
+              var validation = Array.prototype.filter.call(forms,
+                  function (form) {
+                      form.addEventListener('submit', function (
+                          event) {
+                          if (form.checkValidity() ===
+                              false) {
+                              event.preventDefault();
+                              event.stopPropagation();
+                          }
+                          form.classList.add(
+                              'was-validated');
+                      }, false);
+                  });
+          }, false);
+      })();
+  </script>
+
+  <!---validation Js -->
+  {#    <script src="{% static 'assets/js/plugins/bouncer.min.js' %}"></script>#}
+  <!-- form-picker-custom Js -->
+  {#    <script src="{% static 'assets/js/pages/form-validation.js' %}"></script>#}
+
+{% endblock extra_js %}

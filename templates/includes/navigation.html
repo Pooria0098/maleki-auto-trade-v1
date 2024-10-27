@@ -85,7 +85,7 @@
       {% endif %}
 
       <li class="layout-type">
-        <a data-value="dark" data-bs-toggle="tooltip" href="{% url "change_mode" %}"><i
+        <a data-value="dark" data-bs-toggle="tooltip" href="{% url "users:change_mode" %}"><i
           class="icon feather icon-sun"></i></a>
       </li>
 
@@ -173,7 +173,7 @@
               </a>
             </div>
             <ul class="pro-body">
-              <li><a href="{% url "profile" %}" class="dropdown-item"><i class="feather icon-user"></i> Profile</a></li>
+              <li><a href="{% url "users:profile" %}" class="dropdown-item"><i class="feather icon-user"></i> Profile</a></li>
               <li><a href="{% url 'messages' %}" class="dropdown-item"><i class="feather icon-mail"></i> My Messages</a>
               </li>
               {% if request.user.is_superuser %}

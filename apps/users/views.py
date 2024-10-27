@@ -1,5 +1,8 @@
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
-from apps.users.models import Profile
+from rest_framework.reverse import reverse_lazy
+
+from apps.users.models import Profile, ApiStatus
 from apps.users.forms import ProfileForm, QuillFieldForm, APIForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password
@@ -10,8 +13,8 @@ from django.views.generic import TemplateView, ListView, DetailView, UpdateView,
 from apps.users.models import API
 from django.contrib import messages
 
-# Create your views here.
 
+# Create your views here.
 
 
 @login_required(login_url='/accounts/login-v1/')
@@ -77,18 +80,20 @@ def change_mode(request):
         profile.dark_mode = False
     else:
         profile.dark_mode = True
-    
+
     profile.save()
 
     return redirect(request.META.get('HTTP_REFERER'))
 
 
 class APICreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
-    template_name = 'trade/apis/api_create.html'
+    template_name = 'users/apis/api_create.html'
     model = API
     form_class = APIForm
-    # success_url = reverse_lazy('profile')
-    context_object_name = 'api_form'
+    success_message = 'Successfully Created'
+
+    def get_success_url(self):
+        return reverse_lazy('users:api_list')
 
     def form_invalid(self, form):
         messages.warning(self.request, form.errors)
@@ -99,8 +104,82 @@ class APICreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         kwargs.update({'user': self.request.user})
         return kwargs
 
-    def get_initial(self):
-        initial = super().get_initial()
-        initial['parent'] = 'form_components'
-        initial['segment'] = 'form_validation'
-        return initial
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super(APICreateView, self).get_context_data(**kwargs)
+        context.update({
+            'parent': 'Api',
+            'parent_url': 'users:api_list',
+            'segment': 'Create',
+        })
+        return context
+
+
+class APIListView(LoginRequiredMixin, ListView):
+    template_name = 'users/apis/api_list.html'
+    model = API
+    fields = '__all__'
+
+    def get_context_data(self, **kwargs):
+        context = super(APIListView, self).get_context_data(**kwargs)
+        context.update({
+            'parent': 'Api',
+            'segment': 'List',
+        })
+        return context
+
+
+class APIUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    template_name = 'users/apis/api_create.html'
+    model = API
+    form_class = APIForm
+    success_message = 'Successfully Updated'
+
+    def get_success_url(self):
+        return reverse_lazy('users:api_list')
+
+    def form_invalid(self, form):
+        messages.warning(self.request, form.errors)
+        return super().form_invalid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super(APIUpdateView, self).get_context_data(**kwargs)
+        context.update({
+            'parent': 'Api',
+            'parent_url': 'users:api_list',
+            'segment': 'Update',
+        })
+        return context
+
+
+class APIActiveView(LoginRequiredMixin, DeleteView):
+    template_name = 'users/apis/api_list.html'
+    model = API
+
+    def get_success_url(self):
+        return reverse_lazy('users:api_list')
+
+    def form_valid(self, form):
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+        self.object.status = ApiStatus.Active
+        self.object.save()
+        return HttpResponseRedirect(success_url)
+
+
+class APIDeActiveView(LoginRequiredMixin, DeleteView):
+    template_name = 'users/apis/api_list.html'
+    model = API
+
+    def get_success_url(self):
+        return reverse_lazy('users:api_list')
+
+    def form_valid(self, form):
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+        self.object.status = ApiStatus.Deactive
+        self.object.save()
+        return HttpResponseRedirect(success_url)
