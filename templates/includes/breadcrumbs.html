@@ -14,8 +14,13 @@
           </li>
           <li class="breadcrumb-item">
             {% if parent_url %}
-              <a href="{% url parent_url %}"
-                 aria-label="{{ parent|replace_value:'_' }}">{{ parent|replace_value:"_" }}</a>
+              {% if parent_url_id %}
+                <a href="{% url parent_url parent_url_id %}"
+                   aria-label="{{ parent|replace_value:'_' }}">{{ parent|replace_value:"_" }}</a>
+              {% else %}
+                <a href="{% url parent_url %}"
+                   aria-label="{{ parent|replace_value:'_' }}">{{ parent|replace_value:"_" }}</a>
+              {% endif %}
             {% else %}
               <a href="#!">{{ parent|replace_value:"_" }}</a>
             {% endif %}

@@ -6,42 +6,42 @@ User = get_user_model()
 
 ####################### Unions #######################
 class OrderSide(models.IntegerChoices):
-    BUY = 0,
-    SELL = 1
+    Buy = 0,
+    Sell = 1
 
 
 class MarketStrategy(models.IntegerChoices):
-    ISOLATED = 0,
-    CROSS = 1
+    Isolated = 0,
+    Cross = 1
 
 
 class OrderPlaceType(models.IntegerChoices):
-    LIMIT = 0,
-    MARKET = 1
+    Limit = 0,
+    Market = 1
 
 
 class OrderStatus(models.IntegerChoices):
-    FAILED = 0,
-    PENDING = 1,
-    PROCESSING = 2,
-    SUCCESS = 3
+    Failed = 0,
+    Pending = 1,
+    Processing = 2,
+    Success = 3
 
 
 class OrderTriggerType(models.IntegerChoices):
-    ORDINARY = 0,
-    TP = 1,
-    SL = 2
+    Ordinary = 0,
+    Tp = 1,
+    Sl = 2
 
 
 class MarketType(models.IntegerChoices):
-    FUTURES = 0,
-    SPOT = 1
+    Futures = 0,
+    Spot = 1
 
 
 class SystemStatus(models.IntegerChoices):
-    Running = 0, """در حال اجرا"""
-    Busy = 1, """مشغول"""
-    Stop = 2, """متوقف"""
+    Running = 0,
+    Busy = 1,
+    Stop = 2,
 
 
 ####################### Utility #######################
@@ -78,8 +78,8 @@ class Currency(DataModel):
 
 
 class System(DataModel):
-    market_type = models.IntegerField(choices=MarketType.choices, default=MarketType.FUTURES)
-    market_strategy = models.IntegerField(choices=MarketStrategy.choices, default=MarketStrategy.ISOLATED)
+    market_type = models.IntegerField(choices=MarketType.choices, default=MarketType.Futures)
+    market_strategy = models.IntegerField(choices=MarketStrategy.choices, default=MarketStrategy.Isolated)
     creator = models.ForeignKey(User, on_delete=models.PROTECT)
     system_name = models.CharField(max_length=256, unique=True)
     currency = models.ForeignKey(Currency, on_delete=models.CASCADE)
@@ -102,7 +102,7 @@ class System(DataModel):
 
 class Order(DataModel):
     order_fund_rate = models.FloatField()  # todo: total of orders_fund_rate must not be more than engine_fund_rate
-    order_status = models.IntegerField(choices=OrderStatus.choices, default=OrderStatus.PENDING)
+    order_status = models.IntegerField(choices=OrderStatus.choices, default=OrderStatus.Pending)
     tp_price = models.DecimalField(max_digits=20, decimal_places=8, null=True, blank=True)
     sl_price = models.DecimalField(max_digits=20, decimal_places=8, null=True, blank=True)
     err_msg = models.TextField()
@@ -113,13 +113,13 @@ class Order(DataModel):
 
 class ExchangeOrder(DataModel):
     iteration = models.CharField(max_length=128)
-    type = models.IntegerField(choices=OrderTriggerType.choices, default=OrderTriggerType.ORDINARY)
+    type = models.IntegerField(choices=OrderTriggerType.choices, default=OrderTriggerType.Ordinary)
     orderId = models.CharField(max_length=128)
     base_volume = models.DecimalField(max_digits=20, decimal_places=8, blank=True, null=True)
     quote_volume = models.DecimalField(max_digits=20, decimal_places=8, blank=True, null=True)
     line_price = models.DecimalField(max_digits=20, decimal_places=8, null=True, blank=True)
-    order_type = models.IntegerField(choices=OrderSide.choices, default=OrderSide.BUY)
-    place_type = models.IntegerField(choices=OrderPlaceType.choices, default=OrderPlaceType.MARKET)
+    order_type = models.IntegerField(choices=OrderSide.choices, default=OrderSide.Buy)
+    place_type = models.IntegerField(choices=OrderPlaceType.choices, default=OrderPlaceType.Market)
     order_details = models.JSONField(default=dict)
 
     class Meta:

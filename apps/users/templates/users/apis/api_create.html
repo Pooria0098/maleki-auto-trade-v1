@@ -16,19 +16,6 @@
         {% csrf_token %}
         <div class="card-body">
 
-          {% if messages %}
-            {% for message in messages %}
-              <div class="alert {{ message.tags }} alert-dismissible" role="alert">
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-                </button>
-                <h5 class="alert-heading">
-                  <i class="feather icon-alert-circle me-2"></i>
-                </h5>
-                <p class="mb-0">{{ message }}</p>
-              </div>
-            {% endfor %}
-          {% endif %}
-
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">

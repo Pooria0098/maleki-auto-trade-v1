@@ -7,17 +7,17 @@
   <link rel="stylesheet" href="{% static 'assets/css/plugins/buttons.bootstrap5.min.css' %}">
 
   <style>
-    .filter-container {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1rem;
-      margin-bottom: 20px;
-    }
+      .filter-container {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 1rem;
+          margin-bottom: 20px;
+      }
 
-    .filter-item {
-      display: flex;
-      flex-direction: column;
-    }
+      .filter-item {
+          display: flex;
+          flex-direction: column;
+      }
   </style>
 {% endblock extrastyle %}
 
@@ -26,8 +26,8 @@
     <div class="col-sm-12">
       <div class="card">
         <div class="card-header">
-          <h5>Ultra DCA Exchange Orders</h5>
-          <small>Show List of Ultra DCA Exchange Orders</small>
+          <h5>Ultra Grid Exchange Orders</h5>
+          <small>Show List of Ultra Grid Exchange Orders</small>
         </div>
         <div class="card-body">
           <div class="dt-responsive table-responsive">
@@ -62,10 +62,6 @@
                 <input class="form-control" type="number" step="0.00000001" id="line_price" name="line_price">
               </div>
               <div class="filter-item">
-                <label for="avg_price">Avg Line Price Greater Than:</label>
-                <input class="form-control" type="number" step="0.00000001" id="avg_price" name="avg_price">
-              </div>
-              <div class="filter-item">
                 <label for="order_type">Order Type:</label>
                 <select class="form-control" id="order_type" name="order_type">
                   <option value="">Any</option>
@@ -77,8 +73,8 @@
                 <label for="place_type">Place Type:</label>
                 <select class="form-control" id="place_type" name="place_type">
                   <option value="">Any</option>
-                  <option value="Market">Market</option>
                   <option value="Limit">Limit</option>
+                  <option value="Market">Market</option>
                 </select>
               </div>
               <div class="filter-item">
@@ -93,20 +89,19 @@
               <thead>
               <tr>
                 <th>#</th>
-                <th>iteration</th>
-                <th>type</th>
-                <th>orderId</th>
-                <th>base_volume</th>
-                <th>quote_volume</th>
-                <th>line_price</th>
-                <th>avg_price</th>
-                <th>order_type</th>
-                <th>place_type</th>
-                <th>created_at</th>
+                <th>Iteration</th>
+                <th>Type</th>
+                <th>Order ID</th>
+                <th>Base Volume</th>
+                <th>Quote Volume</th>
+                <th>Line Price</th>
+                <th>Order Side</th>
+                <th>Place Type</th>
+                <th>Created At</th>
               </tr>
               </thead>
               <tbody>
-              {% for ultra in ultradcaexchangeorder_list %}
+              {% for ultra in ultragridexchangeorder_list %}
                 <tr>
                   <td>{{ forloop.counter }}</td>
                   <td>{{ ultra.iteration }}</td>
@@ -115,14 +110,13 @@
                   <td>{{ ultra.base_volume }}</td>
                   <td>{{ ultra.quote_volume }}</td>
                   <td>{{ ultra.line_price }}</td>
-                  <td>{{ ultra.avg_price }}</td>
                   <td>{{ ultra.get_order_type_display }}</td>
                   <td>{{ ultra.get_place_type_display }}</td>
                   <td>{{ ultra.created_at|date:"m/d/Y" }}</td>
                 </tr>
               {% empty %}
                 <tr>
-                  <td colspan="10" class="text-center">No Ultra DCA Exchange Order found</td>
+                  <td colspan="10" class="text-center">No Ultra Grid Exchange Order found</td>
                 </tr>
               {% endfor %}
               </tbody>
@@ -148,27 +142,11 @@
   <script src="{% static 'assets/js/plugins/vfs_fonts.js' %}"></script>
 
   <script>
-      // Ensure the DOM is fully loaded
       $(document).ready(function () {
           var table = $('#alt-pg-dt').DataTable({
               "pagingType": "full_numbers",
               dom: 'Bfrtip',
-              buttons: [{
-                  extend: 'copyHtml5',
-                  exportOptions: {
-                      columns: ':visible'
-                  }
-              }, {
-                  extend: 'excelHtml5',
-                  exportOptions: {
-                      columns: ':visible'
-                  }
-              }, {
-                  extend: 'pdfHtml5',
-                  exportOptions: {
-                      columns: ':visible'
-                  }
-              }, {
+              buttons: ['copy', 'excel', 'pdf', {
                   text: 'JSON',
                   action: function (e, dt, button, config) {
                       var data = dt.buttons.exportData();
@@ -185,39 +163,26 @@
                   var baseVolume = parseFloat($('#base_volume').val()) || -1;
                   var quoteVolume = parseFloat($('#quote_volume').val()) || -1;
                   var linePrice = parseFloat($('#line_price').val()) || -1;
-                  var avgLinePrice = parseFloat($('#avg_price').val()) || -1;
                   var orderType = $('#order_type').val();
                   var placeType = $('#place_type').val();
                   var createdAt = new Date($('#created_at').val());
-                  var rowCreatedAt = new Date(data[10]);
+                  var rowCreatedAt = new Date(data[9]);
 
-                  var rowIteration = data[1].toLowerCase();
-                  var rowType = data[2];
-                  var rowOrderId = data[3].toLowerCase();
-                  var rowBaseVolume = parseFloat(data[4]) || 0;
-                  var rowQuoteVolume = parseFloat(data[5]) || 0;
-                  var rowLinePrice = parseFloat(data[6]) || 0;
-                  var rowAvgLinePrice = parseFloat(data[7]) || 0;
-                  var rowOrderType = data[8];
-                  var rowPlaceType = data[9];
-
-                  return rowIteration.includes(iteration) &&
-                      (type === "" || rowType === type) &&
-                      rowOrderId.includes(orderId) &&
-                      (baseVolume === -1 || rowBaseVolume >= baseVolume) &&
-                      (quoteVolume === -1 || rowQuoteVolume >= quoteVolume) &&
-                      (linePrice === -1 || rowLinePrice >= linePrice) &&
-                      (avgLinePrice === -1 || rowAvgLinePrice >= avgLinePrice) &&
-                      (orderType === "" || rowOrderType === orderType) &&
-                      (placeType === "" || rowPlaceType === placeType) &&
+                  return data[1].toLowerCase().includes(iteration) &&
+                      (type === "" || data[2] === type) &&
+                      data[3].toLowerCase().includes(orderId) &&
+                      (baseVolume === -1 || parseFloat(data[4]) >= baseVolume) &&
+                      (quoteVolume === -1 || parseFloat(data[5]) >= quoteVolume) &&
+                      (linePrice === -1 || parseFloat(data[6]) >= linePrice) &&
+                      (orderType === "" || data[7] === orderType) &&
+                      (placeType === "" || data[8] === placeType) &&
                       (isNaN(createdAt.getTime()) || rowCreatedAt >= createdAt);
               }
           );
 
-          $('#iteration, #type, #orderId, #base_volume, #quote_volume, #line_price, #avg_price, #order_type, #place_type, #created_at').on('keyup change', function () {
+          $('#iteration, #type, #orderId, #base_volume, #quote_volume, #line_price, #order_type, #place_type, #created_at').on('keyup change', function () {
               table.draw();
           });
       });
   </script>
-
 {% endblock extra_js %}

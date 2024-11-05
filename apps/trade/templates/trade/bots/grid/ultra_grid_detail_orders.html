@@ -26,39 +26,16 @@
     <div class="col-sm-12">
       <div class="card">
         <div class="card-header">
-          <h5>Ultra DCA Orders</h5>
-          <small>Show List of Ultra DCA Orders</small>
+          <h5>Ultra Grid Orders</h5>
+          <small>List of Ultra Grid Orders</small>
         </div>
         <div class="card-body">
           <div class="dt-responsive table-responsive">
             <div class="filter-container">
               <div class="filter-item">
-                <label for="order_name">Order Name:</label>
-                <input class="form-control" type="text" id="order_name" placeholder="Enter order name"
-                       name="order_name">
-              </div>
-              <div class="filter-item">
-                <label for="order_take_profit">Order Take Profit:</label>
-                <input class="form-control" type="number" id="order_take_profit" placeholder="Enter take profit"
-                       name="order_take_profit">
-              </div>
-              <div class="filter-item">
-                <label for="next_order_start_condition">Next Order Start Condition:</label>
-                <input class="form-control" type="number" id="next_order_start_condition"
-                       placeholder="Enter start condition" name="next_order_start_condition">
-              </div>
-              <div class="filter-item">
-                <label for="next_order_start_time">Next Order Start Time:</label>
-                <input class="form-control" type="number" id="next_order_start_time" placeholder="Enter start time"
-                       name="next_order_start_time">
-              </div>
-              <div class="filter-item">
-                <label for="jumped_order">Jumped Order:</label>
-                <select class="form-control" id="jumped_order" name="jumped_order">
-                  <option value="">All</option>
-                  <option value="true">Yes</option>
-                  <option value="false">No</option>
-                </select>
+                <label for="order_id">Order Name:</label>
+                <input class="form-control" type="number" id="order_id" placeholder="Enter order name"
+                       name="order_id">
               </div>
               <div class="filter-item">
                 <label for="order_fund_rate">Order Fund Rate:</label>
@@ -93,10 +70,6 @@
               <tr>
                 <th>#</th>
                 <th>name</th>
-                <th>order_take_profit</th>
-                <th>next_order_start_condition</th>
-                <th>next_order_start_time</th>
-                <th>jumped_order</th>
                 <th>order_fund_rate</th>
                 <th>order_status</th>
                 <th>tp_price</th>
@@ -106,24 +79,20 @@
               </tr>
               </thead>
               <tbody>
-              {% for ultra in ultradcaorder_list %}
+              {% for order in ultragridorder_list %}
                 <tr>
                   <td>{{ forloop.counter }}</td>
-                  <td><a href="{% url 'trades:ultra_dca_exchange_orders' ultra.id %}">{{ ultra.order_name }}</a></td>
-                  <td>{{ ultra.order_take_profit }}</td>
-                  <td>{{ ultra.next_order_start_condition }}</td>
-                  <td>{{ ultra.next_order_start_time }}</td>
-                  <td>{{ ultra.jumped_order }}</td>
-                  <td>{{ ultra.order_fund_rate }}</td>
-                  <td>{{ ultra.order_status }}</td>
-                  <td>{{ ultra.tp_price }}</td>
-                  <td>{{ ultra.sl_price }}</td>
-                  <td>{{ ultra.created_at|date:"m/d/Y" }}</td>
-                  <td>{{ ultra.err_msg }}</td>
+                  <td><a href="{% url 'trades:ultra_grid_exchange_orders' order.id %}">{{ order.id }}</a></td>
+                  <td>{{ order.order_fund_rate }}</td>
+                  <td>{{ order.order_status }}</td>
+                  <td>{{ order.tp_price }}</td>
+                  <td>{{ order.sl_price }}</td>
+                  <td>{{ order.created_at|date:"m/d/Y" }}</td>
+                  <td>{{ order.err_msg }}</td>
                 </tr>
               {% empty %}
                 <tr>
-                  <td colspan="10" class="text-center">No Ultra DCA Order found</td>
+                  <td colspan="8" class="text-center">No Ultra Grid Order found</td>
                 </tr>
               {% endfor %}
               </tbody>
@@ -149,7 +118,6 @@
   <script src="{% static 'assets/js/plugins/vfs_fonts.js' %}"></script>
 
   <script>
-      // Ensure the DOM is fully loaded
       $(document).ready(function () {
           var table = $('#alt-pg-dt').DataTable({
               "pagingType": "full_numbers",
@@ -180,45 +148,26 @@
 
           $.fn.dataTable.ext.search.push(
               function (settings, data, dataIndex) {
-                  var name = $('#order_name').val().toLowerCase();
-                  var takeProfit = parseFloat($('#order_take_profit').val()) || -1;
-                  var startCondition = parseFloat($('#next_order_start_condition').val()) || -1;
-                  var startTime = parseInt($('#next_order_start_time').val()) || -1;
-                  var jumpedOrder = $('#jumped_order').val();
+                  var name = $('#order_id').val().toLowerCase();
                   var fundRate = parseFloat($('#order_fund_rate').val()) || -1;
                   var status = parseInt($('#order_status').val()) || -1;
                   var tpPrice = parseFloat($('#tp_price').val()) || -1;
                   var slPrice = parseFloat($('#sl_price').val()) || -1;
                   var createdAt = new Date($('#created_at').val());
-                  var rowCreatedAt = new Date(data[10]);
+                  var rowCreatedAt = new Date(data[6]);
 
-                  var rowName = data[1].toLowerCase();
-                  var rowTakeProfit = parseFloat(data[2]) || 0;
-                  var rowStartCondition = parseFloat(data[3]) || 0;
-                  var rowStartTime = parseInt(data[4]) || 0;
-                  var rowJumpedOrder = data[5].toLowerCase();
-                  var rowFundRate = parseFloat(data[6]) || 0;
-                  var rowStatus = parseInt(data[7]) || 0;
-                  var rowTpPrice = parseFloat(data[8]) || 0;
-                  var rowSlPrice = parseFloat(data[9]) || 0;
-
-                  return rowName.includes(name) &&
-                      (takeProfit === -1 || rowTakeProfit >= takeProfit) &&
-                      (startCondition === -1 || rowStartCondition >= startCondition) &&
-                      (startTime === -1 || rowStartTime >= startTime) &&
-                      (!jumpedOrder || rowJumpedOrder === jumpedOrder) &&
-                      (fundRate === -1 || rowFundRate >= fundRate) &&
-                      (status === -1 || rowStatus === status) &&
-                      (tpPrice === -1 || rowTpPrice >= tpPrice) &&
-                      (slPrice === -1 || rowSlPrice >= slPrice) &&
+                  return data[1].toLowerCase().includes(name) &&
+                      (fundRate === -1 || parseFloat(data[2]) >= fundRate) &&
+                      (status === -1 || parseInt(data[3]) === status) &&
+                      (tpPrice === -1 || parseFloat(data[4]) >= tpPrice) &&
+                      (slPrice === -1 || parseFloat(data[5]) >= slPrice) &&
                       (isNaN(createdAt.getTime()) || rowCreatedAt >= createdAt);
               }
           );
 
-          $('#order_name, #order_take_profit, #next_order_start_condition, #next_order_start_time, #jumped_order, #order_fund_rate, #order_status, #tp_price, #sl_price, #created_at').on('keyup change', function () {
+          $('#order_id, #order_fund_rate, #order_status, #tp_price, #sl_price, #created_at').on('keyup change', function () {
               table.draw();
           });
       });
   </script>
-
 {% endblock extra_js %}

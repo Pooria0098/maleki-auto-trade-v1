@@ -85,7 +85,7 @@ def change_mode(request):
 
     return redirect(request.META.get('HTTP_REFERER'))
 
-
+######################################### API #########################################
 class APICreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     template_name = 'users/apis/api_create.html'
     model = API

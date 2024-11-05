@@ -38,6 +38,7 @@ urlpatterns = [
     path('charts/', include('apps.charts.urls')),
     path("tables/", include("apps.tables.urls")),
     path("users/", include("apps.users.urls")),
+    path("trades/", include("apps.trade.urls")),
     path('i18n/', include('django.conf.urls.i18n')),
 
     re_path(r'^media/(?P<path>.*)$', serve,{'document_root': settings.MEDIA_ROOT}), 

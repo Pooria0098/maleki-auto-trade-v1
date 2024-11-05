@@ -4,12 +4,12 @@
 {% block extrastyle %}
   <!-- data tables css -->
   <link rel="stylesheet" href="{% static 'assets/css/plugins/dataTables.bootstrap5.min.css' %}">
-    <link rel="stylesheet" href="{% static 'assets/css/plugins/buttons.bootstrap5.min.css' %}">
+  <link rel="stylesheet" href="{% static 'assets/css/plugins/buttons.bootstrap5.min.css' %}">
 
   <style>
     .filter-container {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(4, 1fr);
       gap: 1rem;
       margin-bottom: 20px;
     }
@@ -162,9 +162,7 @@
                 {% endfor %}
               {% else %}
                 <tr>
-                  <td style="text-align: center">
-                    Not Found!
-                  </td>
+                  <td colspan="10" class="text-center">Not Found!</td>
                 </tr>
               {% endif %}
               </tbody>

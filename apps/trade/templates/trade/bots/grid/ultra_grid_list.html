@@ -26,13 +26,13 @@
     <div class="col-sm-12">
       <div class="card">
         <div class="card-header">
-          <h5>Ultra DCA Systems</h5>
-          <small>Show List of Ultra DCA Systems</small>
+          <h5>Ultra Grid Systems</h5>
+          <small>Show List of Ultra Grid Systems</small>
         </div>
         <div class="card-body">
           <div class="dt-responsive table-responsive">
-            <a href="#" class="btn btn-success"><i class="fas fa-plus"></i> Add New Ultra DCA</a>
-            <a href="#" class="btn btn-danger"><i class="fas fa-trash"></i> Stop All Ultra DCA</a>
+            <a href="#" class="btn btn-success"><i class="fas fa-plus"></i> Add New Ultra Grid</a>
+            <a href="#" class="btn btn-danger"><i class="fas fa-plus"></i> Stop All Ultra Grid</a>
           </div>
 
           <div class="row mt-3">
@@ -131,14 +131,6 @@
                 <input class="form-control" type="number" id="profit_percentages" placeholder="Enter profit %">
               </div>
               <div class="filter-item">
-                <label for="heavy_shedding_is_enabled">Heavy Shedding:</label>
-                <select class="form-control" id="heavy_shedding_is_enabled">
-                  <option value="">All</option>
-                  <option value="True">Enabled</option>
-                  <option value="False">Disabled</option>
-                </select>
-              </div>
-              <div class="filter-item">
                 <label for="stop_loss_is_enabled">Stop Loss:</label>
                 <select class="form-control" id="stop_loss_is_enabled">
                   <option value="">All</option>
@@ -178,10 +170,10 @@
                 <label for="created_at">Created At Grater Than:</label>
                 <input class="form-control" type="date" id="created_at">
               </div>
-              {#              <div class="filter-item">#}
-              {#                <label for="err_msg">Error Message:</label>#}
-              {#                <input class="form-control" type="text" id="err_msg" placeholder="Enter error message">#}
-              {#              </div>#}
+{#              <div class="filter-item">#}
+{#                <label for="err_msg">Error Message:</label>#}
+{#                <input class="form-control" type="text" id="err_msg" placeholder="Enter error message">#}
+{#              </div>#}
             </div>
           </div>
 
@@ -200,24 +192,23 @@
                 <th>status</th>
                 <th>p_amount</th>
                 <th>p_percentages</th>
-                <th>engine_number</th>
+                <th>part_number</th>
                 <th>order_number</th>
-                <th>heavy_shedding</th>
                 <th>stop_loss</th>
                 <th>market_place</th>
                 <th>buy_is_enabled</th>
                 <th>sell_is_enabled</th>
                 <th>start_time</th>
                 <th>created_at</th>
-                <th>err_msg</th>
+                {#                <th>err_msg</th>#}
                 {#                <th>Actions</th>#}
               </tr>
               </thead>
               <tbody>
-              {% for ultra in ultradcasystem_list %}
+              {% for ultra in ultragridsystem_list %}
                 <tr>
                   <td>{{ forloop.counter }}</td>
-                  <td><a href="{% url 'trades:ultra_dca_engines' ultra.id %}">{{ ultra.system_name }}</a></td>
+                  <td><a href="{% url 'trades:ultra_grid_parts' ultra.id %}">{{ ultra.system_name }}</a></td>
                   <td>{{ ultra.currency }}</td>
                   <td>{{ ultra.get_market_type_display }}</td>
                   <td>{{ ultra.get_market_strategy_display }}</td>
@@ -235,9 +226,8 @@
                   </td>
                   <td>{{ ultra.profit_amount }}</td>
                   <td>{{ ultra.profit_percentages }}</td>
-                  <td>{{ ultra.engine_number }}</td>
+                  <td>{{ ultra.part_number }}</td>
                   <td>{{ ultra.order_number }}</td>
-                  <td>{{ ultra.heavy_shedding_is_enabled }}</td>
                   <td>{{ ultra.stop_loss_is_enabled }}</td>
                   <td>{{ ultra.is_in_market_place }}</td>
                   <td>
@@ -280,11 +270,11 @@
                   </td>
                   <td>{{ ultra.start_time|date:"m/d/Y" }}</td>
                   <td>{{ ultra.created_at|date:"m/d/Y" }}</td>
-                  <td>{{ err_msg }}</td>
+                  {#                  <td>{{ err_msg }}</td>#}
                 </tr>
               {% empty %}
                 <tr>
-                  <td colspan="10" class="text-center">No Ultra DCA systems found</td>
+                  <td colspan="10" class="text-center">No Ultra Grid systems found</td>
                 </tr>
               {% endfor %}
               </tbody>
@@ -354,7 +344,6 @@
                   var minBalance = parseFloat($('#min_balance').val()) || -Infinity;
                   var maxBalance = parseFloat($('#max_balance').val()) || Infinity;
                   var status = $('#status').val();
-                  var heavySheddingIsEnabled = $('#heavy_shedding_is_enabled').val();
                   var stopLossIsEnabled = $('#stop_loss_is_enabled').val();
                   var isInMarketPlace = $('#is_in_market_place').val();
                   var buyIsEnabled = $('#buy_is_enabled').val().trim();
@@ -367,7 +356,6 @@
                   // Values from the table row
                   var rowBalance = parseFloat(data[7]) || 0;  // 'system_balance' is in column 6
                   var rowStatus = data[8]; // 'status' in column 8
-                  var rowHeavyShedding = data[13]; //=== 'True' ? 'True' : 'False'; // 'heavy_shedding_is_enabled' in column 11
                   var rowStopLoss = data[14]; //=== 'True' ? 'True' : 'False'; // 'stop_loss_is_enabled' in column 12
                   var rowMarketPlace = data[15]; //=== 'True' ? 'True' : 'False'; // 'is_in_market_place' in column 13
                   var rowBuyEnabled = data[16].trim(); //=== 'True' ? 'True' : 'False'; // 'buy_is_enabled' in column 14
@@ -385,7 +373,6 @@
                       rowBalance >= minBalance &&
                       rowBalance <= maxBalance &&
                       (status === "" || rowStatus === status) &&
-                      (heavySheddingIsEnabled === "" || rowHeavyShedding === heavySheddingIsEnabled) &&
                       (stopLossIsEnabled === "" || rowStopLoss === stopLossIsEnabled) &&
                       (isInMarketPlace === "" || rowMarketPlace === isInMarketPlace) &&
                       (buyIsEnabled === "" || rowBuyEnabled === buyIsEnabled) &&
@@ -401,12 +388,12 @@
           );
 
           // Event handlers for filter inputs with passive event listeners
-          $('#system_name, #currency, #market_type, #market_strategy, #leverage, #system_fund_rate, #min_balance, #max_balance, #status, #profit_amount, #profit_percentages, #heavy_shedding_is_enabled, #stop_loss_is_enabled, #is_in_market_place, #buy_is_enabled, #sell_is_enabled, #created_at, #start_time').on('keyup change', function () {
+          $('#system_name, #currency, #market_type, #market_strategy, #leverage, #system_fund_rate, #min_balance, #max_balance, #status, #profit_amount, #profit_percentages, #stop_loss_is_enabled, #is_in_market_place, #buy_is_enabled, #sell_is_enabled, #created_at, #start_time').on('keyup change', function () {
               table.draw();
           });
 
           // Mark the inputs that are expected to scroll
-          $('#system_name, #currency, #market_type, #market_strategy, #leverage, #system_fund_rate, #min_balance, #max_balance, #status, #profit_amount, #profit_percentages, #heavy_shedding_is_enabled, #stop_loss_is_enabled, #is_in_market_place, #buy_is_enabled, #sell_is_enabled, #created_at, #start_time').css('touch-action', 'pan-y');
+          $('#system_name, #currency, #market_type, #market_strategy, #leverage, #system_fund_rate, #min_balance, #max_balance, #status, #profit_amount, #profit_percentages, #stop_loss_is_enabled, #is_in_market_place, #buy_is_enabled, #sell_is_enabled, #created_at, #start_time').css('touch-action', 'pan-y');
       });
   </script>
 

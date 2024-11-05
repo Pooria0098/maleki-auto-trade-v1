@@ -26,41 +26,45 @@
     <div class="col-sm-12">
       <div class="card">
         <div class="card-header">
-          <h5>Ultra DCA Engines</h5>
-          <small>Show List of Ultra DCA Engines</small>
+          <h5>Ultra DCA Parts</h5>
+          <small>Show List of Ultra Grid Parts</small>
         </div>
         <div class="card-body">
           <div class="dt-responsive table-responsive">
             <div class="filter-container">
               <div class="filter-item">
-                <label for="engine_name">Engine Name:</label>
-                <input class="form-control" type="text" id="engine_name" placeholder="Enter engine name"
-                       name="engine_name">
+                <label for="part_name">Part Name:</label>
+                <input class="form-control" type="text" id="part_name" placeholder="Enter part name" name="part_name">
               </div>
               <div class="filter-item">
-                <label for="order_number">Order Number:</label>
-                <input class="form-control" type="number" id="order_number" placeholder="Enter order number"
-                       name="order_number">
+                <label for="start_order_number">Start Order Number:</label>
+                <input class="form-control" type="number" id="start_order_number" placeholder="Enter start order number"
+                       name="start_order_number">
               </div>
               <div class="filter-item">
-                <label for="next_engine_start_order">Next Engine Start Order:</label>
-                <input class="form-control" type="number" id="next_engine_start_order" placeholder="Enter start order"
-                       name="next_engine_start_order">
+                <label for="end_order_number">End Order Number:</label>
+                <input class="form-control" type="number" id="end_order_number" placeholder="Enter end order number"
+                       name="end_order_number">
               </div>
               <div class="filter-item">
-                <label for="next_engine_start_condition">Next Engine Start Condition:</label>
-                <input class="form-control" type="number" id="next_engine_start_condition"
-                       placeholder="Enter start condition" name="next_engine_start_condition">
+                <label for="order_count">Order Count:</label>
+                <input class="form-control" type="number" id="order_count" placeholder="Enter order count"
+                       name="order_count">
               </div>
               <div class="filter-item">
-                <label for="fall_order_engine_condition">Fall Order Engine Condition:</label>
-                <input class="form-control" type="number" id="fall_order_engine_condition"
-                       placeholder="Enter engine condition" name="fall_order_engine_condition">
+                <label for="part_fund_rate">Part Fund Rate:</label>
+                <input class="form-control" type="number" id="part_fund_rate" placeholder="Enter part fund rate"
+                       name="part_fund_rate">
               </div>
               <div class="filter-item">
-                <label for="fall_order_market_condition">Fall Order Market Condition:</label>
-                <input class="form-control" type="number" id="fall_order_market_condition"
-                       placeholder="Enter market condition" name="fall_order_market_condition">
+                <label for="next_order_condition">Next Order Condition:</label>
+                <input class="form-control" type="number" id="next_order_condition"
+                       placeholder="Enter next order condition" name="next_order_condition">
+              </div>
+              <div class="filter-item">
+                <label for="take_profit_condition">Take Profit Condition:</label>
+                <input class="form-control" type="number" id="take_profit_condition"
+                       placeholder="Enter take profit condition" name="take_profit_condition">
               </div>
               <div class="filter-item">
                 <label for="created_at">Created At Greater Than:</label>
@@ -75,29 +79,31 @@
               <tr>
                 <th>#</th>
                 <th>name</th>
-                <th>order_number</th>
-                <th>next_engine_start_order</th>
-                <th>next_engine_start_condition</th>
-                <th>fall_order_engine_condition</th>
-                <th>fall_order_market_condition</th>
+                <th>start_order_number</th>
+                <th>end_order_number</th>
+                <th>order_count</th>
+                <th>part_fund_rate</th>
+                <th>next_order_condition</th>
+                <th>take_profit_condition</th>
                 <th>created_at</th>
               </tr>
               </thead>
               <tbody>
-              {% for ultra in ultradcaengine_list %}
+              {% for ultra in ultragridpart_list %}
                 <tr>
                   <td>{{ forloop.counter }}</td>
-                  <td><a href="{% url 'trades:ultra_dca_orders' ultra.id %}">{{ ultra.engine_name }}</a></td>
-                  <td>{{ ultra.order_number }}</td>
-                  <td>{{ ultra.next_engine_start_order }}</td>
-                  <td>{{ ultra.next_engine_start_condition }}</td>
-                  <td>{{ ultra.fall_order_engine_condition }}</td>
-                  <td>{{ ultra.fall_order_market_condition }}</td>
+                  <td><a href="{% url 'trades:ultra_grid_orders' ultra.id %}">{{ ultra.part_name }}</a></td>
+                  <td>{{ ultra.start_order_number }}</td>
+                  <td>{{ ultra.end_order_number }}</td>
+                  <td>{{ ultra.order_count }}</td>
+                  <td>{{ ultra.part_fund_rate }}</td>
+                  <td>{{ ultra.next_order_condition }}</td>
+                  <td>{{ ultra.take_profit_condition }}</td>
                   <td>{{ ultra.created_at|date:"m/d/Y" }}</td>
                 </tr>
               {% empty %}
                 <tr>
-                  <td colspan="10" class="text-center">No Ultra DCA Engines found</td>
+                  <td colspan="10" class="text-center">No Grid Parts found</td>
                 </tr>
               {% endfor %}
               </tbody>
@@ -152,42 +158,32 @@
               }, 'colvis']
           });
 
-          // Custom filtering function for advanced filters
+          // Custom filtering function
           $.fn.dataTable.ext.search.push(
               function (settings, data, dataIndex) {
-                  // Filter values
-                  var engineName = $('#engine_name').val().toLowerCase();
-                  var orderNumber = parseInt($('#order_number').val()) || -1;
-                  var nextStartOrder = parseInt($('#next_engine_start_order').val()) || -1;
-                  var nextStartCondition = parseFloat($('#next_engine_start_condition').val()) || -1;
-                  var fallEngineCondition = parseFloat($('#fall_order_engine_condition').val()) || -1;
-                  var fallMarketCondition = parseFloat($('#fall_order_market_condition').val()) || -1;
+                  var partName = $('#part_name').val().toLowerCase();
+                  var startOrderNumber = parseInt($('#start_order_number').val()) || -1;
+                  var endOrderNumber = parseInt($('#end_order_number').val()) || -1;
+                  var orderCount = parseInt($('#order_count').val()) || -1;
+                  var partFundRate = parseFloat($('#part_fund_rate').val()) || -1;
+                  var nextOrderCondition = parseFloat($('#next_order_condition').val()) || -1;
+                  var takeProfitCondition = parseFloat($('#take_profit_condition').val()) || -1;
                   var createdAt = new Date($('#created_at').val());
-                  var rowCreatedAt = new Date(data[7]); // 'created_at' column index
+                  var rowCreatedAt = new Date(data[8]); // Created at column index
 
-                  // Values from the table row
-                  var rowEngineName = data[1].toLowerCase();
-                  var rowOrderNumber = parseInt(data[2]) || 0;
-                  var rowNextStartOrder = parseInt(data[3]) || 0;
-                  var rowNextStartCondition = parseFloat(data[4]) || 0;
-                  var rowFallEngineCondition = parseFloat(data[5]) || 0;
-                  var rowFallMarketCondition = parseFloat(data[6]) || 0;
-
-                  // Apply filters
-                  return rowEngineName.includes(engineName) &&
-                      (orderNumber === -1 || rowOrderNumber === orderNumber) &&
-                      (nextStartOrder === -1 || rowNextStartOrder === nextStartOrder) &&
-                      (nextStartCondition === -1 || rowNextStartCondition >= nextStartCondition) &&
-                      (fallEngineCondition === -1 || rowFallEngineCondition >= fallEngineCondition) &&
-                      (fallMarketCondition === -1 || rowFallMarketCondition >= fallMarketCondition) &&
+                  return data[1].toLowerCase().includes(partName) &&
+                      (startOrderNumber === -1 || parseInt(data[2]) === startOrderNumber) &&
+                      (endOrderNumber === -1 || parseInt(data[3]) === endOrderNumber) &&
+                      (orderCount === -1 || parseInt(data[4]) === orderCount) &&
+                      (partFundRate === -1 || parseFloat(data[5]) >= partFundRate) &&
+                      (nextOrderCondition === -1 || parseFloat(data[6]) >= nextOrderCondition) &&
+                      (takeProfitCondition === -1 || parseFloat(data[7]) >= takeProfitCondition) &&
                       (isNaN(createdAt.getTime()) || rowCreatedAt >= createdAt);
-
-
               }
           );
 
-          // Event handlers for filter inputs
-          $('#engine_name, #order_number, #next_engine_start_order, #next_engine_start_condition, #fall_order_engine_condition, #fall_order_market_condition, #created_at').on('keyup change', function () {
+          // Event listeners for filter inputs
+          $('#part_name, #start_order_number, #end_order_number, #order_count, #part_fund_rate, #next_order_condition, #take_profit_condition, #created_at').on('keyup change', function () {
               table.draw();
           });
       });
