@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
+from apps.users.models import API
+
 User = get_user_model()
 
 
@@ -81,6 +83,7 @@ class System(DataModel):
     market_type = models.IntegerField(choices=MarketType.choices, default=MarketType.Futures)
     market_strategy = models.IntegerField(choices=MarketStrategy.choices, default=MarketStrategy.Isolated)
     creator = models.ForeignKey(User, on_delete=models.PROTECT)
+    api = models.ForeignKey(API, on_delete=models.PROTECT)
     system_name = models.CharField(max_length=256, unique=True)
     currency = models.ForeignKey(Currency, on_delete=models.CASCADE)
     leverage = models.IntegerField(default=0, null=True)

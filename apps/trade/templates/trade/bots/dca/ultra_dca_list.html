@@ -7,17 +7,17 @@
   <link rel="stylesheet" href="{% static 'assets/css/plugins/buttons.bootstrap5.min.css' %}">
 
   <style>
-    .filter-container {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 1rem;
-      margin-bottom: 20px;
-    }
+      .filter-container {
+          display: grid;
+          grid-template-columns: repeat(6, 1fr);
+          gap: 1rem;
+          margin-bottom: 20px;
+      }
 
-    .filter-item {
-      display: flex;
-      flex-direction: column;
-    }
+      .filter-item {
+          display: flex;
+          flex-direction: column;
+      }
   </style>
 {% endblock extrastyle %}
 
@@ -33,45 +33,59 @@
           <div class="dt-responsive table-responsive">
             <a href="#" class="btn btn-success"><i class="fas fa-plus"></i> Add New Ultra DCA</a>
             <a href="#" class="btn btn-danger"><i class="fas fa-trash"></i> Stop All Ultra DCA</a>
+            <div class="col-sm-6">
+              <label for="api_type">API Type:</label>
+              <select class="form-control" id="api_type">
+                <option value="">All Types</option>
+                {% for api in apis %}
+                  <option value="{% url 'trades:ultra_grid_list_with_api' api.id %}">{{ api.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
           </div>
 
           <div class="row mt-3">
             <div class="col-6 col-md-3 ">
               <div
-                  class="bot-box bg-secondary bg-gradient my-2 text-white text-center p-10 mx-2 card border border-secondary rounded">
+                      class="bot-box bg-secondary bg-gradient my-2 text-white text-center p-10 mx-2 card border border-secondary rounded">
                 <i class="fas fa-robot fa-2x mb-2"></i>
                 <span>Total Bots</span>
-                <span>2</span>
+                <span>{{ bot.Total_bots }}</span>
               </div>
             </div>
             <div class="col-6 col-md-3 ">
               <div
-                  class="bot-box bg-success bg-gradient my-2 text-white text-center p-10 mx-2 card border border-success rounded">
+                      class="bot-box bg-success bg-gradient my-2 text-white text-center p-10 mx-2 card border border-success rounded">
                 <i class="fas fa-robot fa-2x mb-2"></i>
-                <span>Running</span>
-                <span>1</span>
+                <span>Running Bots</span>
+                <span>{{ bot.Running_bots }}</span>
               </div>
             </div>
             <div class="col-6 col-md-3">
               <div
-                  class="bot-box bg-warning bg-gradient my-2 text-white text-center p-10 mx-2 card border border-warning rounded">
+                      class="bot-box bg-warning bg-gradient my-2 text-white text-center p-10 mx-2 card border border-warning rounded">
                 <i class="fas fa-robot fa-2x mb-2"></i>
-                <span>Stopped</span>
-                <span>1</span>
+                <span>Stopped Bots</span>
+                <span>{{ bot.Stop_bots }}</span>
               </div>
             </div>
             <div class="col-6 col-md-3 ">
               <div
-                  class="bot-box bg-danger bg-gradient my-2 text-white text-center p-10 mx-2 card border border-danger rounded">
+                      class="bot-box bg-danger bg-gradient my-2 text-white text-center p-10 mx-2 card border border-danger rounded">
                 <i class="fas fa-robot fa-2x mb-2"></i>
-                <span>Bot Error</span>
-                <span>0</span>
+                <span>Busy Bots</span>
+                <span>{{ bot.Busy_bots }}</span>
               </div>
             </div>
           </div>
 
           <div class="dt-responsive table-responsive">
             <div class="filter-container">
+              {#              <div class="filter-item">#}
+              {#                <label for="api_name">API:</label>#}
+              {#                <input class="form-control" type="text" id="api_name" placeholder="Enter api name"#}
+              {#                       name="api_name">#}
+              {#              </div>#}
               <div class="filter-item">
                 <label for="system_name">System Name:</label>
                 <input class="form-control" type="text" id="system_name" placeholder="Enter system name"
@@ -209,6 +223,7 @@
                 <th>sell_is_enabled</th>
                 <th>start_time</th>
                 <th>created_at</th>
+                <th>api</th>
                 <th>err_msg</th>
                 {#                <th>Actions</th>#}
               </tr>
@@ -280,7 +295,8 @@
                   </td>
                   <td>{{ ultra.start_time|date:"m/d/Y" }}</td>
                   <td>{{ ultra.created_at|date:"m/d/Y" }}</td>
-                  <td>{{ err_msg }}</td>
+                  <td>{{ ultra.api }}</td>
+                  <td>{{ ultra.err_msg }}</td>
                 </tr>
               {% empty %}
                 <tr>
@@ -312,6 +328,16 @@
   <script>
       // Ensure the DOM is fully loaded
       $(document).ready(function () {
+          const apiTypeSelect = document.getElementById('api_type');
+
+          apiTypeSelect.addEventListener('change', function () {
+              const selectedUrl = this.value;
+              console.log('selectedUrl: ', selectedUrl)
+              if (selectedUrl) {
+                  window.location.href = selectedUrl;  // Redirect to the selected URL
+              }
+          });
+
           var table = $('#alt-pg-dt').DataTable({
               "pagingType": "full_numbers",
               dom: 'Bfrtip',
@@ -344,6 +370,7 @@
               function (settings, data, dataIndex) {
                   // Filter values
                   var systemName = $('#system_name').val().toLowerCase();
+                  {#var apiName = $('#api_name').val().toLowerCase();#}
                   var currency = $('#currency').val().toLowerCase();
                   var marketType = $('#market_type').val();
                   var marketStrategy = $('#market_strategy').val();
@@ -396,7 +423,7 @@
                       rowProfitPercentages >= profitPercentages &&
                       (isNaN(createdAt.getTime()) || rowCreatedAt >= createdAt) &&
                       (isNaN(startTime.getTime()) || rowStartTime >= startTime);
-
+                  {#data[20].toLowerCase().includes(apiName);#}
               }
           );
 

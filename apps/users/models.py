@@ -38,7 +38,7 @@ class DataModel(models.Model):
 
 
 class Exchange(DataModel):
-    exchange_name = models.CharField(max_length=128, unique=True)
+    exchange_name = models.CharField(max_length=128, unique=True) # MUST BE JUST: Binance, Bingx, Kucoin
 
     def __str__(self):
         return f"{self.exchange_name.upper()}"
@@ -78,7 +78,7 @@ class User(AbstractUser):
 
 
 #############################################################################################################
-# Create your models here.
+
 
 ROLE_CHOICES = (
     ('admin', 'Admin'),
