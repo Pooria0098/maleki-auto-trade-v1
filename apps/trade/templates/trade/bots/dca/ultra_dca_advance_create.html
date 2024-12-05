@@ -1,10 +1,473 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'layouts/base.html' %}
+{% load static %}
 
-</body>
-</html>
+{% block extrastyle %}
+
+  <style>
+      /* Basic styling */
+      .tasks-widget {
+          margin-top: 20px;
+      }
+
+      .engine-form {
+          margin-bottom: 20px;
+          padding: 10px;
+          border: 1px solid #ccc;
+      }
+
+      .order-form {
+          margin-bottom: 10px;
+          padding: 10px;
+          border: 1px solid #ddd;
+          background-color: #f9f9f9;
+      }
+
+      .orders-container {
+          margin-top: 10px;
+          padding: 10px;
+          border: 1px solid #eee;
+      }
+
+  </style>
+
+{% endblock extrastyle %}
+
+{% block content %}
+  <div class="row">
+    <!-- [ form-element ] start -->
+    <div class="col-sm-12">
+      <!-- Basic Inputs -->
+      <div class="card">
+        <div class="card-header">
+          <h5>DCA System</h5>
+        </div>
+        {#      <form class="validate-me" id="validate-me" method="post" action="." data-validate>#}
+        <form role="form" class="needs-validation" method="post" action="." novalidate id="systemForm"
+              enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="card-body">
+            <div class="accordion card" id="accordionExample">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                  <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                          data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    System Creation
+                  </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+                     data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                    <div class="row">
+                      <div class="form-group col-md-6">
+                        <label class="form-label" for="id_{{ form.api.name }}">
+                          {{ form.api.label }}
+                          {% if form.api.field.required %}<span class="text-danger">*</span> {% endif %}
+                        </label>
+                        {{ form.api }}
+                        <small class="form-text text-danger">{{ form.api.errors }}</small>
+                      </div>
+
+                      <div class="form-group col-md-6">
+                        <label class="form-label" for="id_{{ form.currency.name }}">
+                          {{ form.currency.label }}
+                          {% if form.currency.field.required %}<span class="text-danger">*</span> {% endif %}
+                        </label>
+                        {{ form.currency }}
+                        <small class="form-text text-danger">{{ form.currency.errors }}</small>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="form-group col-md-6">
+                        <label class="form-label" for="id_{{ form.system_name.name }}">
+                          {{ form.system_name.label }}
+                          {% if form.system_name.field.required %}<span class="text-danger">*</span> {% endif %}
+                        </label>
+                        {{ form.system_name }}
+                        <small class="form-text text-danger">{{ form.system_name.errors }}</small>
+                      </div>
+
+                      <div class="form-group col-md-6">
+                        <label class="form-label" for="id_{{ form.system_fund_rate.name }}">
+                          {{ form.system_fund_rate.label }}
+                          {% if form.system_fund_rate.field.required %}<span class="text-danger">*</span> {% endif %}
+                        </label>
+                        {{ form.system_fund_rate }}
+                        <small class="form-text text-danger">{{ form.system_fund_rate.errors }}</small>
+                      </div>
+                    </div>
+
+                    <div class="row" id="futures-options">
+                      <div class="form-group col-md-6">
+                        <label class="form-label" for="id_{{ form.market_strategy.name }}">
+                          {{ form.market_strategy.label }}
+                          {% if form.market_strategy.field.required %}<span class="text-danger">*</span> {% endif %}
+                        </label>
+                        {{ form.market_strategy }}
+                        <small class="form-text text-danger">{{ form.market_strategy.errors }}</small>
+                      </div>
+
+                      <div class="form-group col-md-6">
+                        <label class="form-label" for="id_{{ form.leverage.name }}">
+                          {{ form.leverage.label }}
+                          {% if form.leverage.field.required %}<span class="text-danger">*</span> {% endif %}
+                        </label>
+                        {{ form.leverage }}
+                        <small class="form-text text-danger">{{ form.leverage.errors }}</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTwo">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                          data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    Trading Range
+                  </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+                     data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                    <div class="row">
+                      <div class="form-group col-md-6">
+                        <label class="form-label" for="id_{{ form.low_price_bound.name }}">
+                          {{ form.low_price_bound.label }}
+                          {% if form.low_price_bound.field.required %}<span class="text-danger">*</span> {% endif %}
+                        </label>
+                        {{ form.low_price_bound }}
+                        <small class="form-text text-danger">{{ form.low_price_bound.errors }}</small>
+                      </div>
+
+                      <div class="form-group col-md-6">
+                        <label class="form-label" for="id_{{ form.high_price_bound.name }}">
+                          {{ form.high_price_bound.label }}
+                          {% if form.high_price_bound.field.required %}<span class="text-danger">*</span> {% endif %}
+                        </label>
+                        {{ form.high_price_bound }}
+                        <small class="form-text text-danger">{{ form.high_price_bound.errors }}</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingThree">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                          data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    Stop Loss
+                  </button>
+                </h2>
+                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
+                     data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                    <div class="row">
+                      <div class="form-group col-md-6">
+                        <label class="form-label" for="id_{{ form.stop_loss_price.name }}">
+                          {{ form.stop_loss_price.label }}
+                          {% if form.stop_loss_price.field.required %}<span class="text-danger">*</span> {% endif %}
+                        </label>
+                        {{ form.stop_loss_price }}
+                        <small class="form-text text-danger">{{ form.stop_loss_price.errors }}</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingFour">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                          data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                    Heavy Shedding
+                  </button>
+                </h2>
+                <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour"
+                     data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                    <div class="row">
+                      <div class="form-group col-md-6">
+                        <label class="form-label" for="id_{{ form.fall_order_engine_condition.name }}">
+                          {{ form.fall_order_engine_condition.label }}
+                          {% if form.fall_order_engine_condition.field.required %}
+                            <span class="text-danger">*</span> {% endif %}
+                        </label>
+                        {{ form.fall_order_engine_condition }}
+                        <small class="form-text text-danger">{{ form.fall_order_engine_condition.errors }}</small>
+                      </div>
+
+                      <div class="form-group col-md-6">
+                        <label class="form-label" for="id_{{ form.fall_order_market_condition.name }}">
+                          {{ form.fall_order_market_condition.label }}
+                          {% if form.fall_order_market_condition.field.required %}
+                            <span class="text-danger">*</span> {% endif %}
+                        </label>
+                        {{ form.fall_order_market_condition }}
+                        <small class="form-text text-danger">{{ form.fall_order_market_condition.errors }}</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingFive">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                          data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                    Engines
+                  </button>
+                </h2>
+                <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive"
+                     data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <div class="card">
+                          <div class="card-body">
+                            <div class="tasks-widget">
+                              <div id="engineFormsContainer">
+                                <!-- Initial engine form can go here if needed -->
+                              </div>
+                            </div>
+                            <div>
+                              <button class="btn btn-primary mt-3" type="button" id="addEngineButton">Add New Engine
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-footer">
+            <button type="submit" id="saveButton" class="btn btn-primary" name="action" value="save">Create Bot</button>
+            <button type="submit" id="submitButton" class="btn btn-success" name="action" value="submit">Create And Run Bot</button>
+            <button type="reset" class="btn btn-light" id="resetButton">Reset</button>
+          </div>
+        </form>
+      </div>
+      <!-- [ form-element ] end -->
+    </div>
+    <!-- [ Main Content ] end -->
+  </div>
+
+{% endblock content %}
+
+{% block extra_js %}
+  <script>
+      // Example starter JavaScript for disabling form submissions if there are invalid fields
+      (function () {
+          'use strict';
+          window.addEventListener('load', function () {
+              // Fetch all the forms we want to apply custom Bootstrap validation styles to
+              var forms = document.getElementsByClassName(
+                  'needs-validation');
+              // Loop over them and prevent submission
+              var validation = Array.prototype.filter.call(forms,
+                  function (form) {
+                      form.addEventListener('submit', function (
+                          event) {
+                          if (form.checkValidity() ===
+                              false) {
+                              event.preventDefault();
+                              event.stopPropagation();
+                          }
+                          form.classList.add(
+                              'was-validated');
+                      }, false);
+                  });
+          }, false);
+      })();
+  </script>
+
+  <script>
+      document.addEventListener('DOMContentLoaded', function () {
+          const futuresOptions = document.getElementById('futures-options');
+          const apiField = document.getElementById('id_api');
+
+          // Function to toggle visibility based on API selection
+          function toggleFuturesOptions() {
+              const selectedText = apiField.options[apiField.selectedIndex].text
+              if (selectedText) {
+                  if (selectedText.toLowerCase().includes('future')) {  // Adjust this value based on your Futures option value
+                      futuresOptions.style.display = ''
+                  } else {
+                      futuresOptions.style.display = 'none';
+                  }
+              } else {
+                  futuresOptions.style.display = ''
+              }
+          }
+
+          // Add event listener for changes
+          apiField.addEventListener('change', toggleFuturesOptions);
+      });
+  </script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          // Handle Reset Button for Dynamic Fields
+          document.getElementById("resetButton").addEventListener("click", function () {
+              // Remove all dynamically added engine forms
+              document.getElementById("engineFormsContainer").innerHTML = "";
+
+              // Reset engine index counter
+              engineIndex = 0; // or whatever counter you’re using
+          });
+
+      });
+  </script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function (qualifiedName, value) {
+          let engineIndex = 0;
+          const orderCounters = {}; // Track order indices per engine
+
+          // Function to add a new engine form
+          function addEngineForm() {
+              engineIndex++;
+              orderCounters[engineIndex] = 1; // Initialize the counter for this engine
+              const engineForm = document.createElement('div');
+              engineForm.classList.add('engine-form', 'needs-validation', 'mb-5');
+              engineForm.setAttribute('id', `engine-${engineIndex}`);
+              engineForm.setAttribute('novalidate', '');
+              engineForm.innerHTML = `
+              {% csrf_token %}
+              <div class="row">
+                  <div class="form-group col-md-4">
+                      <label class="form-label" for="engine-${engineIndex}-engine_name">
+                          Engine Name
+                          <span class="text-danger">*</span>
+                      </label>
+                      <input type="text" name="engine-${engineIndex}-engine_name" maxlength="256"
+                             required id="engine-${engineIndex}-engine_name" class="form-control">
+                  </div>
+                  <div class="form-group col-md-4">
+                      <label class="form-label" for="engine-${engineIndex}-next_engine_start_order">
+                          Next Engine Start Order
+                      </label>
+                      <input type="number" class="vTextField form-control"
+                             name="engine-${engineIndex}-next_engine_start_order"
+                             id="engine-${engineIndex}-next_engine_start_order">
+                  </div>
+                  <div class="form-group col-md-4">
+                      <label class="form-label" for="engine-${engineIndex}-next_engine_start_condition">
+                          Next Engine Start Condition
+                      </label>
+                      <input type="number" class="vTextField form-control"
+                             name="engine-${engineIndex}-next_engine_start_condition"
+                             id="engine-${engineIndex}-next_engine_start_condition">
+                  </div>
+              </div>
+              <div class="form-group orders-container" id="orders-container-${engineIndex}"></div>
+              <button type="button" class="btn btn-secondary mt-2 add-order-button" data-engine-index="${engineIndex}">Add New Order</button>
+              <button type="button" class="btn btn-danger mt-2" onclick="removeEngineForm(${engineIndex})">Remove Engine</button>
+            `;
+              document.getElementById("engineFormsContainer").appendChild(engineForm);
+
+              // Attach the addOrderForm function to the new "Add New Order" button
+              engineForm.querySelector('.add-order-button').addEventListener("click", function () {
+                  const engineIndex = this.getAttribute('data-engine-index');
+                  addOrderForm(engineIndex);
+              });
+          }
+
+          // Function to add a new order form within a specific engine form
+          function addOrderForm(engineIndex) {
+              const orderIndex = orderCounters[engineIndex]++;
+              const orderContainer = document.getElementById(`orders-container-${engineIndex}`);
+              const orderForm = document.createElement('div');
+              orderForm.classList.add('order-form');
+              orderForm.classList.add('needs-validation');
+              orderForm.classList.add('mb-3');
+              orderForm.setAttribute('id', `order-${engineIndex}-${orderIndex}`);
+              orderForm.setAttribute('novalidate', '');
+              orderForm.innerHTML = `
+              {% csrf_token %}
+              <div class="row">
+                  <div class="form-group col-md-4">
+                      <label for="order-${orderIndex}-engine-${engineIndex}-order_name">
+                          Order Name
+                          <span class="text-danger">*</span>
+                      </label>
+                      <input type="text" name="order-${orderIndex}-engine-${engineIndex}-order_name" maxlength="256"
+                       required id="order-${orderIndex}-engine-${engineIndex}-order_name" class="form-control">
+                  </div>
+                  <div class="form-group col-md-4">
+                      <label for="order-${orderIndex}-engine-${engineIndex}-order_fund_rate">
+                          Order Fund Rate
+                          <span class="text-danger">*</span>
+                      </label>
+                      <input type="number" name="order-${orderIndex}-engine-${engineIndex}-order_fund_rate"
+                       class="vTextField form-control"
+                       required="" id="order-${orderIndex}-engine-${engineIndex}-order_fund_rate">
+                  </div>
+                  <div class="form-group col-md-4">
+                      <label for="order-${orderIndex}-engine-${engineIndex}-order_take_profit">
+                          Order Take Profit
+                          <span class="text-danger">*</span>
+                      </label>
+                      <input type="number" name="order-${orderIndex}-engine-${engineIndex}-order_take_profit"
+                       class="vTextField form-control"
+                      required="" id="order-${orderIndex}-engine-${engineIndex}-order_take_profit">
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="form-group col-md-6">
+                      <label for="order-${orderIndex}-engine-${engineIndex}-next_order_start_condition">
+                           Next Order Start Condition
+                      </label>
+                      <input type="number" class="vTextField form-control" name="order-${orderIndex}-engine-${engineIndex}-next_order_start_condition"
+                      id="order-${orderIndex}-engine-${engineIndex}-next_order_start_condition">
+                  </div>
+                  <div class="form-group col-md-6">
+                      <label for="order-${orderIndex}-engine-${engineIndex}-next_order_start_time">
+                           Next Order Start Time
+                      </label>
+                      <input type="number" class="vTextField form-control" name="order-${orderIndex}-engine-${engineIndex}-next_order_start_time"
+                       id="order-${orderIndex}-engine-${engineIndex}-next_order_start_time">
+                  </div>
+              </div>
+              <button type="button" class="btn btn-danger btn-sm" onclick="removeOrderForm(${engineIndex}, ${orderIndex})">Remove Order</button>
+          `;
+              orderContainer.appendChild(orderForm);
+          }
+
+          // Function to remove a specific engine form
+          window.removeEngineForm = function (engineIndex) {
+              document.getElementById(`engine-${engineIndex}`).remove();
+          }
+
+          // Function to remove a specific order form within an engine
+          window.removeOrderForm = function (engineIndex, orderIndex) {
+              const orderForm = document.getElementById(`order-${engineIndex}-${orderIndex}`);
+              if (orderForm) {
+                  orderForm.remove();
+              }
+          }
+
+          // Event listener for adding a new engine
+          document.getElementById("addEngineButton").addEventListener("click", addEngineForm);
+      });
+  </script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          const form = document.getElementById("systemForm");
+          const saveButton = document.getElementById("saveButton");
+          const submitButton = document.getElementById("submitButton");
+
+          saveButton.addEventListener("click", function () {
+              // Update the form action or add query param for Save
+              form.action = "./?action=save";
+          });
+
+          submitButton.addEventListener("click", function () {
+              // Update the form action or add query param for Submit
+              form.action = "./?action=submit";
+          });
+      });
+  </script>
+{% endblock extra_js %}
