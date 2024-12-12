@@ -81,33 +81,42 @@ class Currency(DataModel):
 
 class System(DataModel):
     market_type = models.IntegerField(choices=MarketType.choices, default=MarketType.Futures)
-    market_strategy = models.IntegerField(choices=MarketStrategy.choices, default=MarketStrategy.Isolated)
+    market_strategy = models.IntegerField(choices=MarketStrategy.choices, default=MarketStrategy.Isolated,null=True, blank=True)
     creator = models.ForeignKey(User, on_delete=models.PROTECT)
     api = models.ForeignKey(API, on_delete=models.PROTECT)
     system_name = models.CharField(max_length=256, unique=True)
     currency = models.ForeignKey(Currency, on_delete=models.CASCADE)
-    leverage = models.IntegerField(default=0, null=True)
+    leverage = models.IntegerField(blank=True, null=True, default=None)
     system_fund_rate = models.FloatField(default=0)
-    system_balance = models.FloatField(default=0, null=True, blank=True)
+    system_balance = models.FloatField(default=0)
     status = models.IntegerField(choices=SystemStatus.choices, default=SystemStatus.Running)
-    buy_is_enabled = models.BooleanField(default=True)
-    sell_is_enabled = models.BooleanField(default=True)
-    start_time = models.DateTimeField(null=True, blank=True)
+    buy_is_enabled = models.BooleanField(default=False)
+    sell_is_enabled = models.BooleanField(default=False)
+    start_time = models.DateTimeField(null=True, blank=True, default=None)
+    """
+     اگه این فیلد خالی باشه فقط ی سیستم می سازه ولی اجراش نمی کنه 
+     هرموقع خواست اجراش کنه این فیلد زمان همون لحظه می گیره.پس تو هسته معاملاتی سیستم هایی که Running هستند و 
+     is_active اونا True و start_time دارند مورد بررسی قرار می گیرند 
+    """
     err_msg = models.TextField()
     is_in_market_place = models.BooleanField(default=False)
     stop_loss_is_enabled = models.BooleanField(default=False)
+    stop_loss_price = models.FloatField(null=True, blank=True, default=None)
     profit_amount = models.FloatField(default=0)
     profit_percentages = models.FloatField(default=0)
+    is_limited_order = models.BooleanField(default=False)
+    low_price_bound = models.FloatField(null=True, blank=True, default=None)
+    high_price_bound = models.FloatField(null=True, blank=True, default=None)
 
     class Meta:
         abstract = True
 
 
 class Order(DataModel):
-    order_fund_rate = models.FloatField()  # todo: total of orders_fund_rate must not be more than engine_fund_rate
+    order_fund_rate = models.FloatField(default=0)
     order_status = models.IntegerField(choices=OrderStatus.choices, default=OrderStatus.Pending)
-    tp_price = models.DecimalField(max_digits=20, decimal_places=8, null=True, blank=True)
-    sl_price = models.DecimalField(max_digits=20, decimal_places=8, null=True, blank=True)
+    tp_price = models.DecimalField(max_digits=20, decimal_places=8, null=True, blank=True, default=None)
+    sl_price = models.DecimalField(max_digits=20, decimal_places=8, null=True, blank=True, default=None)
     err_msg = models.TextField()
 
     class Meta:
@@ -118,9 +127,9 @@ class ExchangeOrder(DataModel):
     iteration = models.CharField(max_length=128)
     type = models.IntegerField(choices=OrderTriggerType.choices, default=OrderTriggerType.Ordinary)
     orderId = models.CharField(max_length=128)
-    base_volume = models.DecimalField(max_digits=20, decimal_places=8, blank=True, null=True)
-    quote_volume = models.DecimalField(max_digits=20, decimal_places=8, blank=True, null=True)
-    line_price = models.DecimalField(max_digits=20, decimal_places=8, null=True, blank=True)
+    base_volume = models.DecimalField(max_digits=20, decimal_places=8, blank=True, null=True, default=None)
+    quote_volume = models.DecimalField(max_digits=20, decimal_places=8, blank=True, null=True, default=None)
+    line_price = models.DecimalField(max_digits=20, decimal_places=8, blank=True, null=True, default=None)
     order_type = models.IntegerField(choices=OrderSide.choices, default=OrderSide.Buy)
     place_type = models.IntegerField(choices=OrderPlaceType.choices, default=OrderPlaceType.Market)
     order_details = models.JSONField(default=dict)
@@ -134,6 +143,12 @@ class UltraDCASystem(System):
     engine_number = models.PositiveIntegerField(default=0)
     order_number = models.PositiveIntegerField(default=0)
     heavy_shedding_is_enabled = models.BooleanField(default=False)  # ریزش سنگین
+    fall_order_engine_condition = models.FloatField(
+        default=None, help_text='after_how_much_falls_of_latest_order_in_current_engine_fall_order_starts',
+        null=True, blank=True)
+    fall_order_market_condition = models.FloatField(
+        default=None, help_text='after_how_much_falls_of_price_from_marketLine_fall_order_starts',
+        null=True, blank=True)
 
     def __str__(self):
         return f"{self.system_name}"
@@ -144,14 +159,14 @@ class UltraDCAEngine(DataModel):
     engine_name = models.CharField(max_length=256, default='')
     order_number = models.PositiveIntegerField(default=0)
     next_engine_start_order = models.PositiveIntegerField(
-        default=None, help_text='after_how_many_orders_of_current_engine_next_engine_start', null=True)
+        default=None, blank=True, help_text='after_how_many_orders_of_current_engine_next_engine_start', null=True)
     next_engine_start_condition = models.FloatField(
-        default=None, help_text='after_how_much_falls_of_current_engine_next_engine_start', null=True)
+        default=None, blank=True, help_text='after_how_much_falls_of_current_engine_next_engine_start', null=True)
     fall_order_engine_condition = models.FloatField(
-        default=None, help_text='after_how_much_falls_of_latest_order_in_current_engine_fall_order_starts',
+        default=None, blank=True, help_text='after_how_much_falls_of_latest_order_in_current_engine_fall_order_starts',
         null=True)
     fall_order_market_condition = models.FloatField(
-        default=None, help_text='after_how_much_falls_of_price_from_marketLine_fall_order_starts',
+        default=None, blank=True, help_text='after_how_much_falls_of_price_from_marketLine_fall_order_starts',
         null=True)
 
     def __str__(self):
@@ -163,9 +178,9 @@ class UltraDCAOrder(Order):
     order_take_profit = models.FloatField(default=0)
     order_name = models.CharField(max_length=256, default='')
     next_order_start_condition = models.FloatField(
-        default=None, help_text="after_how_much_falls_of_current_order_next_order_start", null=True)
+        default=None, help_text="after_how_much_falls_of_current_order_next_order_start", null=True, blank=True)
     next_order_start_time = models.IntegerField(
-        default=None, help_text="after_how_many_time_next_order_start", null=True)
+        default=None, help_text="after_how_many_time_next_order_start", null=True, blank=True)
     jumped_order = models.BooleanField(default=False)
 
     def __str__(self):
@@ -181,7 +196,7 @@ class UltraDCAOrder(Order):
 class UltraDCAExchangeOrder(ExchangeOrder):
     engine = models.ForeignKey(UltraDCAEngine, on_delete=models.CASCADE)
     order = models.ForeignKey(UltraDCAOrder, on_delete=models.CASCADE)
-    avg_price = models.DecimalField(max_digits=20, decimal_places=8, blank=True, null=True,
+    avg_price = models.DecimalField(max_digits=20, decimal_places=8, blank=True, default=None, null=True,
                                     help_text='my_line_price_after_average')  # قیمت سرخط خرید بعد از میانگین گیری
 
     def __str__(self):
@@ -204,9 +219,9 @@ class UltraGridPart(DataModel):
     end_order_number = models.PositiveIntegerField(default=0)
     order_count = models.PositiveIntegerField(default=0)
     part_fund_rate = models.FloatField(default=0)
-    next_order_condition = models.FloatField(default=0,
+    next_order_condition = models.FloatField(null=True, blank=True, default=None,
                                              help_text="after_how_much_falls_of_current_order_next_order_start")
-    take_profit_condition = models.FloatField(default=0,
+    take_profit_condition = models.FloatField(null=True, blank=True, default=None,
                                               help_text="after_how_much_jump_order_close")
 
     def __str__(self):

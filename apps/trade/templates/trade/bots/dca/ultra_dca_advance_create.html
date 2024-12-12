@@ -4,29 +4,29 @@
 {% block extrastyle %}
 
   <style>
-      /* Basic styling */
-      .tasks-widget {
-          margin-top: 20px;
-      }
+    /* Basic styling */
+    .tasks-widget {
+      margin-top: 20px;
+    }
 
-      .engine-form {
-          margin-bottom: 20px;
-          padding: 10px;
-          border: 1px solid #ccc;
-      }
+    .engine-form {
+      margin-bottom: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
 
-      .order-form {
-          margin-bottom: 10px;
-          padding: 10px;
-          border: 1px solid #ddd;
-          background-color: #f9f9f9;
-      }
+    .order-form {
+      margin-bottom: 10px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      background-color: #f9f9f9;
+    }
 
-      .orders-container {
-          margin-top: 10px;
-          padding: 10px;
-          border: 1px solid #eee;
-      }
+    .orders-container {
+      margin-top: 10px;
+      padding: 10px;
+      border: 1px solid #eee;
+    }
 
   </style>
 
@@ -40,6 +40,12 @@
       <div class="card">
         <div class="card-header">
           <h5>DCA System</h5>
+          <button id="calculate-balances-btn" class="btn btn-info">
+            Update Balance From Exchange
+          </button>
+          <div id="loading-indicator" style="display: none; color: red">
+            Updating...
+          </div>
         </div>
         {#      <form class="validate-me" id="validate-me" method="post" action="." data-validate>#}
         <form role="form" class="needs-validation" method="post" action="." novalidate id="systemForm"
@@ -91,8 +97,11 @@
                         <label class="form-label" for="id_{{ form.system_fund_rate.name }}">
                           {{ form.system_fund_rate.label }}
                           {% if form.system_fund_rate.field.required %}<span class="text-danger">*</span> {% endif %}
+                          (<span id="id_fund_amount">0$</span>)
                         </label>
                         {{ form.system_fund_rate }}
+                        <input type="hidden" id="spot_balance" value="{{ spot_balance }}">
+                        <input type="hidden" id="swap_balance" value="{{ swap_balance }}">
                         <small class="form-text text-danger">{{ form.system_fund_rate.errors }}</small>
                       </div>
                     </div>
@@ -240,11 +249,17 @@
               </div>
             </div>
           </div>
-
+          <div id="comparison-result" class="mt-3"></div>
           <div class="card-footer">
-            <button type="submit" id="saveButton" class="btn btn-primary" name="action" value="save">Create Bot</button>
-            <button type="submit" id="submitButton" class="btn btn-success" name="action" value="submit">Create And Run Bot</button>
+            <button type="submit" id="saveButton" class="btn btn-primary" name="action" value="save">
+              Create Bot
+            </button>
+            <button type="submit" id="submitButton" class="btn btn-success" name="action" value="submit">
+              Create And Run Bot
+            </button>
             <button type="reset" class="btn btn-light" id="resetButton">Reset</button>
+            <strong>Total Engines: <span id="engineCount">0</span></strong>
+            <strong>Total Orders: <span id="orderCount">0</span></strong>
           </div>
         </form>
       </div>
@@ -321,9 +336,56 @@
   </script>
 
   <script>
-      document.addEventListener("DOMContentLoaded", function (qualifiedName, value) {
+      document.addEventListener("DOMContentLoaded", function () {
+          const fundRateInput = document.getElementById('id_system_fund_rate');
+          const fundAmountInput = document.getElementById('id_fund_amount');
+          const apiTypeInput = document.getElementById('id_api');
+          let spotBalance = parseFloat(document.getElementById('spot_balance').value);
+          let swapBalance = parseFloat(document.getElementById('swap_balance').value);
+          console.log('spotBalance: ', spotBalance)
+          console.log('swapBalance: ', swapBalance)
+
           let engineIndex = 0;
           const orderCounters = {}; // Track order indices per engine
+          let totalOrderCount = 0; // Counter for total orders across all engines
+
+          function calculateFundAmount(fundRate, balance) {
+              if (!isNaN(fundRate) && !isNaN(balance)) {
+                  {#console.log('QQQ: ', ((fundRate / 100) * balance).toFixed(4))#}
+                  return ((fundRate / 100) * balance).toFixed(4);
+              }
+              return '';
+          }
+
+          function updateSystemFundAmount() {
+              const fundRate = parseFloat(fundRateInput.value);
+              console.log('updateSystemFundAmount fundRate: ', fundRate)
+              const selectedText = apiTypeInput.options[apiTypeInput.selectedIndex].text
+              const balance = selectedText.toLowerCase().includes('future') ? swapBalance : spotBalance;
+              console.log('updateSystemFundAmount balance: ', balance)
+              fundAmountInput.value = calculateFundAmount(fundRate, balance);
+              fundAmountInput.textContent = `${calculateFundAmount(fundRate, balance)} $`;
+              displayComparisonResult();
+          }
+
+          function updateOrderFundAmounts() {
+              const balance = fundAmountInput.value;
+              console.log('updateOrderFundAmounts balance: ', balance)
+              document.querySelectorAll('.order-fund-rate').forEach(function (orderFundRateInput) {
+                  const fundRate = parseFloat(orderFundRateInput.value);
+                  console.log('updateOrderFundAmounts fundRate: ', fundRate)
+                  const orderFundAmountInput = orderFundRateInput.closest('.order-form').querySelector('.order-fund-amount');
+                  orderFundAmountInput.textContent = `${calculateFundAmount(fundRate, balance)} $`;
+                  orderFundAmountInput.value = calculateFundAmount(fundRate, balance);
+              });
+              displayComparisonResult();
+          }
+
+          // Function to update the counters in the UI
+          function updateCounters() {
+              document.getElementById("engineCount").textContent = document.querySelectorAll(".engine-form").length;
+              document.getElementById("orderCount").textContent = totalOrderCount;
+          }
 
           // Function to add a new engine form
           function addEngineForm() {
@@ -372,6 +434,8 @@
                   const engineIndex = this.getAttribute('data-engine-index');
                   addOrderForm(engineIndex);
               });
+
+              updateCounters(); // Update counters after adding an engine
           }
 
           // Function to add a new order form within a specific engine form
@@ -399,9 +463,11 @@
                       <label for="order-${orderIndex}-engine-${engineIndex}-order_fund_rate">
                           Order Fund Rate
                           <span class="text-danger">*</span>
+                          <span id="order-${orderIndex}-engine-${engineIndex}-order_fund_amount"></span>
+                          (<span class="order-fund-amount">0$</span>)
                       </label>
                       <input type="number" name="order-${orderIndex}-engine-${engineIndex}-order_fund_rate"
-                       class="vTextField form-control"
+                       class="vTextField form-control order-fund-rate"
                        required="" id="order-${orderIndex}-engine-${engineIndex}-order_fund_rate">
                   </div>
                   <div class="form-group col-md-4">
@@ -433,11 +499,19 @@
               <button type="button" class="btn btn-danger btn-sm" onclick="removeOrderForm(${engineIndex}, ${orderIndex})">Remove Order</button>
           `;
               orderContainer.appendChild(orderForm);
+              totalOrderCount++; // Increment total orders count
+              updateCounters();  // Update counters after adding an order
+              updateOrderFundAmounts(); // Update fund amounts when new order forms are generated
           }
 
           // Function to remove a specific engine form
           window.removeEngineForm = function (engineIndex) {
-              document.getElementById(`engine-${engineIndex}`).remove();
+              const engineElement = document.getElementById(`engine-${engineIndex}`);
+              const orderForms = engineElement.querySelectorAll(".order-form");
+              totalOrderCount -= orderForms.length; // Subtract the orders in the engine from total
+              engineElement.remove();
+
+              updateCounters(); // Update counters after removing an engine
           }
 
           // Function to remove a specific order form within an engine
@@ -446,10 +520,142 @@
               if (orderForm) {
                   orderForm.remove();
               }
+              totalOrderCount--; // Decrement total orders count
+              updateCounters();  // Update counters after removing an order
+              updateOrderFundAmounts(); // Update fund amounts after removing an order
           }
 
           // Event listener for adding a new engine
           document.getElementById("addEngineButton").addEventListener("click", addEngineForm);
+
+          fundRateInput.addEventListener('input', updateSystemFundAmount);
+
+          apiTypeInput.addEventListener('change', function () {
+              updateSystemFundAmount();
+              updateOrderFundAmounts();
+          });
+
+          document.addEventListener('input', function (event) {
+              if (event.target.classList.contains('order-fund-rate')) {
+                  updateOrderFundAmounts();
+              }
+          });
+
+          updateSystemFundAmount();
+          updateOrderFundAmounts();
+
+          // Initialize counters in the UI
+          updateCounters();
+
+          ///////////////////////////////////////////////////////////////
+          const calculateButton = document.getElementById('calculate-balances-btn');
+          const loadingIndicator = document.getElementById('loading-indicator');
+
+          calculateButton.addEventListener('click', function () {
+              loadingIndicator.style.display = 'block'; // Show loading indicator
+              fetch(`/trades/get_balance/${apiTypeInput.value}/`, {
+                  method: 'GET',
+                  headers: {
+                      'Content-Type': 'application/json',
+                      'X-CSRFToken': getCookie('csrftoken') // Ensure CSRF token is included
+                  },
+              })
+                  .then(response => response.json())
+                  .then(data => {
+                      spotBalance = document.getElementById('spot_balance').value = parseFloat(data.spot_balance);
+                      swapBalance = document.getElementById('swap_balance').value = parseFloat(data.swap_balance);
+                      console.log('spotBalance: ', spotBalance)
+                      console.log('swapBalance: ', swapBalance)
+                      updateSystemFundAmount();
+                      updateOrderFundAmounts();
+                      addMessage(data.message, 'alert-success');
+                      loadingIndicator.style.display = 'none'; // Hide loading indicator
+                  })
+                  .catch(error => {
+                      console.error('Error:', error);
+                      addMessage(error, 'alert-warning');
+                      loadingIndicator.style.display = 'none'; // Hide loading indicator
+                  });
+          });
+
+          function getCookie(name) {
+              let cookieValue = null;
+              if (document.cookie && document.cookie !== '') {
+                  const cookies = document.cookie.split(';');
+                  for (let i = 0; i < cookies.length; i++) {
+                      const cookie = cookies[i].trim();
+                      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                          break;
+                      }
+                  }
+              }
+              return cookieValue;
+          }
+
+          function calculateOrderFundTotal() {
+              let totalOrderFundAmount = 0;
+
+              document.querySelectorAll('.order-fund-amount').forEach(function (orderFundAmountInput) {
+                  const fundAmount = parseFloat(orderFundAmountInput.value);
+                  if (!isNaN(fundAmount)) {
+                      totalOrderFundAmount += fundAmount;
+                  }
+              });
+
+              return totalOrderFundAmount;
+          }
+
+          function compareFundAmounts() {
+              const systemFundAmount = parseFloat(fundAmountInput.value);
+              const totalOrderFundAmount = calculateOrderFundTotal();
+              let message = '';
+              if (totalOrderFundAmount > systemFundAmount) {
+                  message = `The total amount of order capital is greater than the amount of system capital ${(totalOrderFundAmount - systemFundAmount).toFixed(4)}.`;
+              } else if (totalOrderFundAmount < systemFundAmount) {
+                  message = `The total amount of order capital is less than the amount of system capital by ${(systemFundAmount - totalOrderFundAmount).toFixed(4)}.`;
+              } else {
+                  message = 'The total amount of order capital is equal to the amount of system capital.';
+              }
+              return message;
+          }
+
+          function displayComparisonResult() {
+              const comparisonResult = compareFundAmounts();
+              const comparisonResultDiv = document.getElementById('comparison-result');
+              {#const alertDiv = document.createElement('div');#}
+              comparisonResultDiv.className = `alert alert-info alert-dismissible fade show`;
+              comparisonResultDiv.role = 'alert';
+              comparisonResultDiv.innerHTML = `
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <h5 class="alert-heading">
+                    <i class="feather icon-alert-circle me-2"></i>
+                </h5>
+                <p class="mb-0">${comparisonResult}</p>
+              `;
+              {#comparisonResultDiv.prepend(alertDiv);#}
+
+          }
+
+          function addMessage(message, type) {
+              const messagesContainer = document.querySelector('.main-body .page-wrapper');
+
+              // Create the alert div
+              const alertDiv = document.createElement('div');
+              alertDiv.className = `alert ${type} alert-dismissible`;
+              alertDiv.role = 'alert';
+              alertDiv.innerHTML = `
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <h5 class="alert-heading">
+                    <i class="feather icon-alert-circle me-2"></i>
+                </h5>
+                <p class="mb-0">${message}</p>
+              `;
+
+              // Insert the alert div at the top of the messages container
+              messagesContainer.prepend(alertDiv);
+          }
+
       });
   </script>
 

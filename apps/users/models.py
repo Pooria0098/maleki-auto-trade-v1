@@ -53,7 +53,7 @@ class API(DataModel):
     secret_key = models.CharField(max_length=512)
     secret_key_hashed = models.CharField(max_length=512)
     api_mode = models.IntegerField(choices=ApiModType.choices, default=ApiModType.Hedge)
-    expire_date = models.DateTimeField(blank=True, null=True)
+    expire_date = models.DateTimeField(blank=True,null=True, default=None)
     balance = models.FloatField(default=0)
     status = models.IntegerField(choices=ApiStatus.choices, default=ApiStatus.Deactive)
 
@@ -72,7 +72,7 @@ class API(DataModel):
 
 class User(AbstractUser):
     currencies = models.ManyToManyField('trade.Currency', blank=True)
-    otp = models.CharField(max_length=128, null=True, blank=True, default=None)
+    otp = models.CharField(max_length=128, null=True,blank=True, default=None)
     email_verified = models.BooleanField(default=False)
     email = models.EmailField(unique=True)
 

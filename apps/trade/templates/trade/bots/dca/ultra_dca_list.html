@@ -31,14 +31,14 @@
         </div>
         <div class="card-body">
           <div class="dt-responsive table-responsive">
-            <a href="#" class="btn btn-success"><i class="fas fa-plus"></i> Add New Ultra DCA</a>
+            <a href="{% url 'trades:ultra_dca_advanced_create' %}" class="btn btn-success"><i class="fas fa-plus"></i> Add New Ultra DCA</a>
             <a href="#" class="btn btn-danger"><i class="fas fa-trash"></i> Stop All Ultra DCA</a>
             <div class="col-sm-6">
               <label for="api_type">API Type:</label>
               <select class="form-control" id="api_type">
                 <option value="">All Types</option>
                 {% for api in apis %}
-                  <option value="{% url 'trades:ultra_grid_list_with_api' api.id %}">{{ api.name }}</option>
+                  <option value="{% url 'trades:ultra_dca_list_with_api' api.id %}">{{ api.name }}</option>
                 {% endfor %}
               </select>
             </div>
@@ -65,16 +65,16 @@
               <div
                       class="bot-box bg-warning bg-gradient my-2 text-white text-center p-10 mx-2 card border border-warning rounded">
                 <i class="fas fa-robot fa-2x mb-2"></i>
-                <span>Stopped Bots</span>
-                <span>{{ bot.Stop_bots }}</span>
+                <span>Busy Bots</span>
+                <span>{{ bot.Busy_bots }}</span>
               </div>
             </div>
             <div class="col-6 col-md-3 ">
               <div
                       class="bot-box bg-danger bg-gradient my-2 text-white text-center p-10 mx-2 card border border-danger rounded">
                 <i class="fas fa-robot fa-2x mb-2"></i>
-                <span>Busy Bots</span>
-                <span>{{ bot.Busy_bots }}</span>
+                <span>Stopped Bots</span>
+                <span>{{ bot.Stop_bots }}</span>
               </div>
             </div>
           </div>
@@ -225,7 +225,7 @@
                 <th>created_at</th>
                 <th>api</th>
                 <th>err_msg</th>
-                {#                <th>Actions</th>#}
+                <th>actions</th>
               </tr>
               </thead>
               <tbody>
@@ -297,6 +297,15 @@
                   <td>{{ ultra.created_at|date:"m/d/Y" }}</td>
                   <td>{{ ultra.api }}</td>
                   <td>{{ ultra.err_msg }}</td>
+                  <td>
+                    <div class="d-flex justify-content-between">
+                      <form method="post" action='.'>
+                        <button class="text-danger" title="make deactive"><i
+                                class="fas fa-trash-alt fa-1x"></i>
+                        </button>
+                      </form>
+                    </div>
+                  </td>
                 </tr>
               {% empty %}
                 <tr>
