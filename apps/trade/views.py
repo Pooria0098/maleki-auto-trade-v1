@@ -3,7 +3,8 @@ from django.shortcuts import render, get_object_or_404
 from django.views.generic import TemplateView, ListView, DetailView, UpdateView, CreateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from loguru import logger
-from apps.trade.forms import UltraDCASmartSystemForm, UltraDCAAdvancedSystemForm, UltraDCAEngineForm, UltraDCAOrderForm
+from apps.trade.forms import UltraDCASmartSystemForm, UltraDCAAdvancedSystemForm, UltraDCAEngineForm, UltraDCAOrderForm, \
+    UltraGridSmartSystemForm, UltraGridAdvancedSystemForm, UltraGridPartForm
 from apps.trade.models import UltraDCASystem, UltraGridSystem, UltraDCAEngine, UltraDCAOrder, UltraDCAExchangeOrder, \
     UltraGridPart, UltraGridOrder, UltraGridExchangeOrder, MarketType
 from django.contrib import messages
@@ -333,12 +334,144 @@ class UltraDCADeactivateAllView(TemplateView):
 
 
 ######################################### UltraGrid #########################################
-class UltraGridSmartCreateView(TemplateView):
+class UltraGridSmartCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     template_name = 'trade/bots/grid/ultra_grid_smart_create.html'
+    model = UltraGridSystem
+    form_class = UltraGridSmartSystemForm
+    success_message = 'Successfully Created'
+
+    def get_success_url(self):
+        return reverse_lazy('trades:ultra_grid_list')
+
+    def form_invalid(self, form):
+        messages.warning(self.request, form.errors)
+        return super().form_invalid(form)
+
+    def get_form_kwargs(self):
+        kwargs = super(UltraGridSmartCreateView, self).get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super(UltraGridSmartCreateView, self).get_context_data(**kwargs)
+        context.update({
+            'parent': 'UltraGrid',
+            'parent_url': 'trades:ultra_grid_list',
+            'segment': 'Create',
+        })
+        return context
 
 
-class UltraGridAdvancedCreateView(TemplateView):
+class UltraGridAdvancedCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     template_name = 'trade/bots/grid/ultra_grid_advance_create.html'
+    model = UltraDCASystem
+    form_class = UltraGridAdvancedSystemForm
+    success_message = 'Successfully Created'
+
+    def get_success_url(self):
+        return reverse_lazy('trades:ultra_grid_list')
+
+    def form_invalid(self, form):
+        messages.warning(self.request, form.errors)
+        return super().form_invalid(form)
+
+    def get_form_kwargs(self):
+        kwargs = super(UltraGridAdvancedCreateView, self).get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
+
+    def find_part_order_numbers(self):
+        # Initialize sets to store unique engine and order numbers
+        part_numbers = set()
+
+        # Loop through the keys to identify engines and orders
+        for key in self.request.POST.keys():
+            if key.startswith("part-"):
+                # Extract the engine number, e.g., "engine-1-engine_name" -> 1
+                part_number = key.split("-")[1]
+                part_numbers.add(part_number)
+
+        return part_numbers
+
+    def form_valid(self, form):
+        try:
+            with transaction.atomic():
+                forms = []
+                if form.is_valid():
+                    system_instance = form.save(commit=False)
+                    system_instance.creator = self.request.user
+
+                    if 'spot' in form.cleaned_data.get('api').__str__().lower():
+                        system_instance.market_type = MarketType.Spot
+                    else:
+                        system_instance.market_type = MarketType.Futures
+
+                    if form.cleaned_data.get('stop_loss_price') is not None:
+                        system_instance.stop_loss_is_enabled = True
+
+                    if form.cleaned_data.get('low_price_bound') is not None or form.cleaned_data.get(
+                            'high_price_bound') is not None:
+                        system_instance.is_limited_order = True
+
+                    action = self.request.GET.get('action')
+                    if action == 'submit':
+                        system_instance.start_time = timezone.now()
+
+                    system_instance.save()
+
+                    part_numbers = self.find_part_order_numbers()
+                    order_numbers = 0
+                    sorted_part_numbers = sorted(part_numbers)
+                    for i in sorted_part_numbers:
+                        part_form = UltraGridPartForm(self.request.POST, prefix=f'part-{i}')
+                        forms.append({
+                            'part_form': part_form,
+                        })
+
+                        # Validate engine form
+                        if not part_form.is_valid():
+                            return self.form_invalid(form)
+
+                    for _form in forms:
+                        part_instance = _form['part_form'].save(commit=False)
+                        part_instance.system = system_instance
+                        order_count = part_instance.end_order_number - part_instance.start_order_number + 1
+                        order_numbers += order_count
+                        part_instance.order_count = order_count
+                        part_instance.save()
+
+                        for i in range(order_count):
+                            order_fund_rate = part_instance.part_fund_rate / part_instance.order_count
+                            UltraGridOrder.objects.create(part=part_instance, order_fund_rate=order_fund_rate)
+
+                    system_instance.part_number = len(part_numbers)
+                    system_instance.order_number = order_numbers
+                    system_instance.save()
+                    return super().form_valid(form)
+                else:
+                    return self.form_invalid(form)
+
+        except Exception as _e:
+            logger.warning(f'UltraGridAdvancedCreateView Error: {_e}')
+            transaction.rollback()
+            return self.form_invalid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super(UltraGridAdvancedCreateView, self).get_context_data(**kwargs)
+        context.update({
+            'parent': 'UltraGrid',
+            'parent_url': 'trades:ultra_grid_list',
+            'segment': 'Create',
+        })
+        context.update({
+            'spot_balance': 0,
+            'swap_balance': 0,
+        })
+        return context
 
 
 class UltraGridListView(LoginRequiredMixin, ListView):

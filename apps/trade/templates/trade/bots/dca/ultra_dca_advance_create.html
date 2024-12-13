@@ -33,6 +33,7 @@
 {% endblock extrastyle %}
 
 {% block content %}
+
   <div class="row">
     <!-- [ form-element ] start -->
     <div class="col-sm-12">
@@ -336,27 +337,118 @@
   </script>
 
   <script>
+      // Wait for the DOM to be fully loaded
       document.addEventListener("DOMContentLoaded", function () {
-          const fundRateInput = document.getElementById('id_system_fund_rate');
-          const fundAmountInput = document.getElementById('id_fund_amount');
-          const apiTypeInput = document.getElementById('id_api');
-          let spotBalance = parseFloat(document.getElementById('spot_balance').value);
-          let swapBalance = parseFloat(document.getElementById('swap_balance').value);
-          console.log('spotBalance: ', spotBalance)
-          console.log('swapBalance: ', swapBalance)
+          /*** 1. Global Variables ***/
+          const fundRateInput = document.getElementById('id_system_fund_rate'); // System fund rate input
+          const fundAmountInput = document.getElementById('id_fund_amount'); // System fund amount input
+          const apiTypeInput = document.getElementById('id_api'); // API type selector
+          let spotBalance = parseFloat(document.getElementById('spot_balance').value); // Spot balance from backend
+          let swapBalance = parseFloat(document.getElementById('swap_balance').value); // Swap balance from backend
 
-          let engineIndex = 0;
+          let engineIndex = 0; // Counter for engine forms
           const orderCounters = {}; // Track order indices per engine
           let totalOrderCount = 0; // Counter for total orders across all engines
 
+          console.log('spotBalance: ', spotBalance)
+          console.log('swapBalance: ', swapBalance)
+
+          /*** 2. Utility Functions ***/
+
+          // Calculate fund amount based on fund rate and balance
           function calculateFundAmount(fundRate, balance) {
               if (!isNaN(fundRate) && !isNaN(balance)) {
-                  {#console.log('QQQ: ', ((fundRate / 100) * balance).toFixed(4))#}
                   return ((fundRate / 100) * balance).toFixed(4);
               }
               return '';
           }
 
+          // Get the CSRF token for secure API requests
+          function getCookie(name) {
+              let cookieValue = null;
+              if (document.cookie && document.cookie !== '') {
+                  const cookies = document.cookie.split(';');
+                  for (let i = 0; i < cookies.length; i++) {
+                      const cookie = cookies[i].trim();
+                      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                          break;
+                      }
+                  }
+              }
+              return cookieValue;
+          }
+
+          // Display system-level comparison result between fund and order amounts
+          function displayComparisonResult() {
+              const comparisonResult = compareFundAmounts();
+              const comparisonResultDiv = document.getElementById('comparison-result');
+              {#const alertDiv = document.createElement('div');#}
+              comparisonResultDiv.className = `alert alert-info alert-dismissible fade show`;
+              comparisonResultDiv.role = 'alert';
+              comparisonResultDiv.innerHTML = `
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <h5 class="alert-heading">
+                    <i class="feather icon-alert-circle me-2"></i>
+                </h5>
+                <p class="mb-0">${comparisonResult}</p>
+              `;
+              {#comparisonResultDiv.prepend(alertDiv);#}
+
+          }
+
+          // Calculate the total order fund amount across all engines
+          function calculateOrderFundTotal() {
+              let totalOrderFundAmount = 0;
+
+              document.querySelectorAll('.order-fund-amount').forEach(function (orderFundAmountInput) {
+                  const fundAmount = parseFloat(orderFundAmountInput.value);
+                  if (!isNaN(fundAmount)) {
+                      totalOrderFundAmount += fundAmount;
+                  }
+              });
+
+              return totalOrderFundAmount;
+          }
+
+          // Calculate and compare system fund amount with total order fund amounts
+          function compareFundAmounts() {
+              const systemFundAmount = parseFloat(fundAmountInput.value);
+              const totalOrderFundAmount = calculateOrderFundTotal();
+              let message = '';
+              if (totalOrderFundAmount > systemFundAmount) {
+                  message = `The total amount of order capital is greater than the amount of system capital ${(totalOrderFundAmount - systemFundAmount).toFixed(4)}.`;
+              } else if (totalOrderFundAmount < systemFundAmount) {
+                  message = `The total amount of order capital is less than the amount of system capital by ${(systemFundAmount - totalOrderFundAmount).toFixed(4)}.`;
+              } else {
+                  message = 'The total amount of order capital is equal to the amount of system capital.';
+              }
+              return message;
+          }
+
+          // Add a new alert message to the UI
+          function addMessage(message, type) {
+              const messagesContainer = document.querySelector('.main-body .page-wrapper');
+
+              // Create the alert div
+              const alertDiv = document.createElement('div');
+              alertDiv.className = `alert ${type} alert-dismissible`;
+              alertDiv.role = 'alert';
+              alertDiv.innerHTML = `
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <h5 class="alert-heading">
+                    <i class="feather icon-alert-circle me-2"></i>
+                </h5>
+                <p class="mb-0">${message}</p>
+              `;
+
+              // Insert the alert div at the top of the messages container
+              messagesContainer.prepend(alertDiv);
+          }
+
+          /*** 3. System Fund Update Functions ***/
+
+          // Update system fund amount based on selected API type and balance
           function updateSystemFundAmount() {
               const fundRate = parseFloat(fundRateInput.value);
               console.log('updateSystemFundAmount fundRate: ', fundRate)
@@ -368,6 +460,7 @@
               displayComparisonResult();
           }
 
+          // Update fund amounts for all order forms
           function updateOrderFundAmounts() {
               const balance = fundAmountInput.value;
               console.log('updateOrderFundAmounts balance: ', balance)
@@ -381,16 +474,18 @@
               displayComparisonResult();
           }
 
-          // Function to update the counters in the UI
+          /*** 4. Engine and Order Management Functions ***/
+
+          // Update counters for engines and orders
           function updateCounters() {
               document.getElementById("engineCount").textContent = document.querySelectorAll(".engine-form").length;
               document.getElementById("orderCount").textContent = totalOrderCount;
           }
 
-          // Function to add a new engine form
+          // Add a new engine form dynamically
           function addEngineForm() {
               engineIndex++;
-              orderCounters[engineIndex] = 1; // Initialize the counter for this engine
+              orderCounters[engineIndex] = 1; // Initialize order counter for this engine
               const engineForm = document.createElement('div');
               engineForm.classList.add('engine-form', 'needs-validation', 'mb-5');
               engineForm.setAttribute('id', `engine-${engineIndex}`);
@@ -429,16 +524,16 @@
             `;
               document.getElementById("engineFormsContainer").appendChild(engineForm);
 
-              // Attach the addOrderForm function to the new "Add New Order" button
+              // Attach the order-adding functionality to the new button
               engineForm.querySelector('.add-order-button').addEventListener("click", function () {
                   const engineIndex = this.getAttribute('data-engine-index');
                   addOrderForm(engineIndex);
               });
 
-              updateCounters(); // Update counters after adding an engine
+              updateCounters();
           }
 
-          // Function to add a new order form within a specific engine form
+          // Add a new order form within a specific engine
           function addOrderForm(engineIndex) {
               const orderIndex = orderCounters[engineIndex]++;
               const orderContainer = document.getElementById(`orders-container-${engineIndex}`);
@@ -499,52 +594,57 @@
               <button type="button" class="btn btn-danger btn-sm" onclick="removeOrderForm(${engineIndex}, ${orderIndex})">Remove Order</button>
           `;
               orderContainer.appendChild(orderForm);
-              totalOrderCount++; // Increment total orders count
-              updateCounters();  // Update counters after adding an order
-              updateOrderFundAmounts(); // Update fund amounts when new order forms are generated
+              totalOrderCount++;
+              updateCounters();
+              r
+              updateOrderFundAmounts();
           }
 
-          // Function to remove a specific engine form
+          // Remove a specific engine form
           window.removeEngineForm = function (engineIndex) {
               const engineElement = document.getElementById(`engine-${engineIndex}`);
               const orderForms = engineElement.querySelectorAll(".order-form");
-              totalOrderCount -= orderForms.length; // Subtract the orders in the engine from total
+              totalOrderCount -= orderForms.length;
               engineElement.remove();
 
-              updateCounters(); // Update counters after removing an engine
+              updateCounters();
           }
 
-          // Function to remove a specific order form within an engine
+          // Remove a specific order form
           window.removeOrderForm = function (engineIndex, orderIndex) {
               const orderForm = document.getElementById(`order-${engineIndex}-${orderIndex}`);
               if (orderForm) {
                   orderForm.remove();
               }
-              totalOrderCount--; // Decrement total orders count
-              updateCounters();  // Update counters after removing an order
-              updateOrderFundAmounts(); // Update fund amounts after removing an order
+              totalOrderCount--;
+              updateCounters();
+              updateOrderFundAmounts();
           }
 
-          // Event listener for adding a new engine
+          /*** 5. Event Listeners and Initial Setup ***/
+
+          // Add engine button listener
           document.getElementById("addEngineButton").addEventListener("click", addEngineForm);
 
+          // Fund rate input listener
           fundRateInput.addEventListener('input', updateSystemFundAmount);
 
+          // API type selector listener
           apiTypeInput.addEventListener('change', function () {
               updateSystemFundAmount();
               updateOrderFundAmounts();
           });
 
+          // Order fund rate input listener (delegated)
           document.addEventListener('input', function (event) {
               if (event.target.classList.contains('order-fund-rate')) {
                   updateOrderFundAmounts();
               }
           });
 
+          // Initial calculations
           updateSystemFundAmount();
           updateOrderFundAmounts();
-
-          // Initialize counters in the UI
           updateCounters();
 
           ///////////////////////////////////////////////////////////////
@@ -577,85 +677,6 @@
                       loadingIndicator.style.display = 'none'; // Hide loading indicator
                   });
           });
-
-          function getCookie(name) {
-              let cookieValue = null;
-              if (document.cookie && document.cookie !== '') {
-                  const cookies = document.cookie.split(';');
-                  for (let i = 0; i < cookies.length; i++) {
-                      const cookie = cookies[i].trim();
-                      if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                          break;
-                      }
-                  }
-              }
-              return cookieValue;
-          }
-
-          function calculateOrderFundTotal() {
-              let totalOrderFundAmount = 0;
-
-              document.querySelectorAll('.order-fund-amount').forEach(function (orderFundAmountInput) {
-                  const fundAmount = parseFloat(orderFundAmountInput.value);
-                  if (!isNaN(fundAmount)) {
-                      totalOrderFundAmount += fundAmount;
-                  }
-              });
-
-              return totalOrderFundAmount;
-          }
-
-          function compareFundAmounts() {
-              const systemFundAmount = parseFloat(fundAmountInput.value);
-              const totalOrderFundAmount = calculateOrderFundTotal();
-              let message = '';
-              if (totalOrderFundAmount > systemFundAmount) {
-                  message = `The total amount of order capital is greater than the amount of system capital ${(totalOrderFundAmount - systemFundAmount).toFixed(4)}.`;
-              } else if (totalOrderFundAmount < systemFundAmount) {
-                  message = `The total amount of order capital is less than the amount of system capital by ${(systemFundAmount - totalOrderFundAmount).toFixed(4)}.`;
-              } else {
-                  message = 'The total amount of order capital is equal to the amount of system capital.';
-              }
-              return message;
-          }
-
-          function displayComparisonResult() {
-              const comparisonResult = compareFundAmounts();
-              const comparisonResultDiv = document.getElementById('comparison-result');
-              {#const alertDiv = document.createElement('div');#}
-              comparisonResultDiv.className = `alert alert-info alert-dismissible fade show`;
-              comparisonResultDiv.role = 'alert';
-              comparisonResultDiv.innerHTML = `
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                <h5 class="alert-heading">
-                    <i class="feather icon-alert-circle me-2"></i>
-                </h5>
-                <p class="mb-0">${comparisonResult}</p>
-              `;
-              {#comparisonResultDiv.prepend(alertDiv);#}
-
-          }
-
-          function addMessage(message, type) {
-              const messagesContainer = document.querySelector('.main-body .page-wrapper');
-
-              // Create the alert div
-              const alertDiv = document.createElement('div');
-              alertDiv.className = `alert ${type} alert-dismissible`;
-              alertDiv.role = 'alert';
-              alertDiv.innerHTML = `
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                <h5 class="alert-heading">
-                    <i class="feather icon-alert-circle me-2"></i>
-                </h5>
-                <p class="mb-0">${message}</p>
-              `;
-
-              // Insert the alert div at the top of the messages container
-              messagesContainer.prepend(alertDiv);
-          }
-
       });
   </script>
 

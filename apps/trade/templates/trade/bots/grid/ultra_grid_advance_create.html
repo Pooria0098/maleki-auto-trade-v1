@@ -1,10 +1,556 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'layouts/base.html' %}
+{% load static %}
 
-</body>
-</html>
+{% block extrastyle %}
+
+  <style>
+    /* Basic styling */
+    .tasks-widget {
+      margin-top: 20px;
+    }
+
+    .part-form {
+      margin-bottom: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
+
+    .order-form {
+      margin-bottom: 10px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      background-color: #f9f9f9;
+    }
+
+  </style>
+
+{% endblock extrastyle %}
+
+{% block content %}
+  <div class="row">
+    <!-- [ form-element ] start -->
+    <div class="col-sm-12">
+      <!-- Basic Inputs -->
+      <div class="card">
+        <div class="card-header">
+          <h5>Grid System</h5>
+          <button id="calculate-balances-btn" class="btn btn-info">
+            Update Balance From Exchange
+          </button>
+          <div id="loading-indicator" style="display: none; color: red">
+            Updating...
+          </div>
+        </div>
+        {#      <form class="validate-me" id="validate-me" method="post" action="." data-validate>#}
+        <form role="form" class="needs-validation" method="post" action="." novalidate id="systemForm"
+              enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="card-body">
+            <div class="accordion card" id="accordionExample">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                  <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                          data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    System Creation
+                  </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+                     data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                    <div class="row">
+                      <div class="form-group col-md-6">
+                        <label class="form-label" for="id_{{ form.api.name }}">
+                          {{ form.api.label }}
+                          {% if form.api.field.required %}<span class="text-danger">*</span> {% endif %}
+                        </label>
+                        {{ form.api }}
+                        <small class="form-text text-danger">{{ form.api.errors }}</small>
+                      </div>
+
+                      <div class="form-group col-md-6">
+                        <label class="form-label" for="id_{{ form.currency.name }}">
+                          {{ form.currency.label }}
+                          {% if form.currency.field.required %}<span class="text-danger">*</span> {% endif %}
+                        </label>
+                        {{ form.currency }}
+                        <small class="form-text text-danger">{{ form.currency.errors }}</small>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="form-group col-md-6">
+                        <label class="form-label" for="id_{{ form.system_name.name }}">
+                          {{ form.system_name.label }}
+                          {% if form.system_name.field.required %}<span class="text-danger">*</span> {% endif %}
+                        </label>
+                        {{ form.system_name }}
+                        <small class="form-text text-danger">{{ form.system_name.errors }}</small>
+                      </div>
+
+                      <div class="form-group col-md-6">
+                        <label class="form-label" for="id_{{ form.system_fund_rate.name }}">
+                          {{ form.system_fund_rate.label }}
+                          {% if form.system_fund_rate.field.required %}<span class="text-danger">*</span> {% endif %}
+                          (<span id="id_fund_amount">0$</span>)
+                        </label>
+                        {{ form.system_fund_rate }}
+                        <input type="hidden" id="spot_balance" value="{{ spot_balance }}">
+                        <input type="hidden" id="swap_balance" value="{{ swap_balance }}">
+                        <small class="form-text text-danger">{{ form.system_fund_rate.errors }}</small>
+                      </div>
+                    </div>
+
+                    <div class="row" id="futures-options">
+                      <div class="form-group col-md-6">
+                        <label class="form-label" for="id_{{ form.market_strategy.name }}">
+                          {{ form.market_strategy.label }}
+                          {% if form.market_strategy.field.required %}<span class="text-danger">*</span> {% endif %}
+                        </label>
+                        {{ form.market_strategy }}
+                        <small class="form-text text-danger">{{ form.market_strategy.errors }}</small>
+                      </div>
+
+                      <div class="form-group col-md-6">
+                        <label class="form-label" for="id_{{ form.leverage.name }}">
+                          {{ form.leverage.label }}
+                          {% if form.leverage.field.required %}<span class="text-danger">*</span> {% endif %}
+                        </label>
+                        {{ form.leverage }}
+                        <small class="form-text text-danger">{{ form.leverage.errors }}</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTwo">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                          data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    Trading Range
+                  </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+                     data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                    <div class="row">
+                      <div class="form-group col-md-6">
+                        <label class="form-label" for="id_{{ form.low_price_bound.name }}">
+                          {{ form.low_price_bound.label }}
+                          {% if form.low_price_bound.field.required %}<span class="text-danger">*</span> {% endif %}
+                        </label>
+                        {{ form.low_price_bound }}
+                        <small class="form-text text-danger">{{ form.low_price_bound.errors }}</small>
+                      </div>
+
+                      <div class="form-group col-md-6">
+                        <label class="form-label" for="id_{{ form.high_price_bound.name }}">
+                          {{ form.high_price_bound.label }}
+                          {% if form.high_price_bound.field.required %}<span class="text-danger">*</span> {% endif %}
+                        </label>
+                        {{ form.high_price_bound }}
+                        <small class="form-text text-danger">{{ form.high_price_bound.errors }}</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingThree">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                          data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    Stop Loss
+                  </button>
+                </h2>
+                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
+                     data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                    <div class="row">
+                      <div class="form-group col-md-6">
+                        <label class="form-label" for="id_{{ form.stop_loss_price.name }}">
+                          {{ form.stop_loss_price.label }}
+                          {% if form.stop_loss_price.field.required %}<span class="text-danger">*</span> {% endif %}
+                        </label>
+                        {{ form.stop_loss_price }}
+                        <small class="form-text text-danger">{{ form.stop_loss_price.errors }}</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingFive">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                          data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                    Parts
+                  </button>
+                </h2>
+                <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive"
+                     data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <div class="card">
+                          <div class="card-body">
+                            <div class="tasks-widget">
+                              <div id="partFormsContainer">
+                                <!-- Initial engine form can go here if needed -->
+                              </div>
+                            </div>
+                            <div>
+                              <button class="btn btn-primary mt-3" type="button" id="addPartButton">Add New Part
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="comparison-result" class="mt-3"></div>
+          <div class="card-footer">
+            <button type="submit" id="saveButton" class="btn btn-primary" name="action" value="save">
+              Create Bot
+            </button>
+            <button type="submit" id="submitButton" class="btn btn-success" name="action" value="submit">
+              Create And Run Bot
+            </button>
+            <button type="reset" class="btn btn-light" id="resetButton">Reset</button>
+            <strong>Total Parts: <span id="partCount">0</span></strong>
+            <strong>Total Orders: <span id="orderCount">0</span></strong>
+          </div>
+        </form>
+      </div>
+      <!-- [ form-element ] end -->
+    </div>
+    <!-- [ Main Content ] end -->
+  </div>
+
+{% endblock content %}
+
+{% block extra_js %}
+  <script>
+      // Example starter JavaScript for disabling form submissions if there are invalid fields
+      (function () {
+          'use strict';
+          window.addEventListener('load', function () {
+              // Fetch all the forms we want to apply custom Bootstrap validation styles to
+              var forms = document.getElementsByClassName(
+                  'needs-validation');
+              // Loop over them and prevent submission
+              var validation = Array.prototype.filter.call(forms,
+                  function (form) {
+                      form.addEventListener('submit', function (
+                          event) {
+                          if (form.checkValidity() ===
+                              false) {
+                              event.preventDefault();
+                              event.stopPropagation();
+                          }
+                          form.classList.add(
+                              'was-validated');
+                      }, false);
+                  });
+          }, false);
+      })();
+  </script>
+
+  <script>
+      document.addEventListener('DOMContentLoaded', function () {
+          const futuresOptions = document.getElementById('futures-options');
+          const apiField = document.getElementById('id_api');
+
+          // Function to toggle visibility based on API selection
+          function toggleFuturesOptions() {
+              const selectedText = apiField.options[apiField.selectedIndex].text
+              if (selectedText) {
+                  if (selectedText.toLowerCase().includes('future')) {  // Adjust this value based on your Futures option value
+                      futuresOptions.style.display = ''
+                  } else {
+                      futuresOptions.style.display = 'none';
+                  }
+              } else {
+                  futuresOptions.style.display = ''
+              }
+          }
+
+          // Add event listener for changes
+          apiField.addEventListener('change', toggleFuturesOptions);
+      });
+  </script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          // Handle Reset Button for Dynamic Fields
+          document.getElementById("resetButton").addEventListener("click", function () {
+              // Remove all dynamically added engine forms
+              document.getElementById("partFormsContainer").innerHTML = "";
+
+              // Reset engine index counter
+              partIndex = 0; // or whatever counter you’re using
+          });
+      });
+  </script>
+
+  <script>
+      // Main JavaScript functionality for managing form inputs and interactions
+      document.addEventListener("DOMContentLoaded", function () {
+          /*** VARIABLE DECLARATIONS ***/
+
+              // Main form elements
+          const fundRateInput = document.getElementById('id_system_fund_rate');
+          const fundAmountInput = document.getElementById('id_fund_amount');
+          const apiTypeInput = document.getElementById('id_api');
+
+          // Balance values for spot and swap
+          let spotBalance = parseFloat(document.getElementById('spot_balance').value);
+          let swapBalance = parseFloat(document.getElementById('swap_balance').value);
+          console.log('spotBalance: ', spotBalance)
+          console.log('swapBalance: ', swapBalance)
+
+          // Counters for parts and orders
+          let partIndex = 0; // Tracks the number of parts (engines)
+          let totalOrderCount = 0; // Tracks total orders across all parts
+          const orderCounters = {}; // Tracks the order count for each part
+
+          /*** UTILITY FUNCTIONS ***/
+
+          // Calculates the fund amount based on fund rate and balance
+          function calculateFundAmount(fundRate, balance) {
+              if (!isNaN(fundRate) && !isNaN(balance)) {
+                  return ((fundRate / 100) * balance).toFixed(4);
+              }
+              return '';
+          }
+
+          // Updates the system fund amount based on the selected API type and fund rate
+          function updateSystemFundAmount() {
+              const fundRate = parseFloat(fundRateInput.value);
+              console.log('updateSystemFundAmount fundRate: ', fundRate)
+              const selectedText = apiTypeInput.options[apiTypeInput.selectedIndex].text
+              const balance = selectedText.toLowerCase().includes('future') ? swapBalance : spotBalance;
+              console.log('updateSystemFundAmount balance: ', balance)
+              fundAmountInput.value = calculateFundAmount(fundRate, balance);
+              fundAmountInput.textContent = `${calculateFundAmount(fundRate, balance)} $`;
+          }
+
+          // Updates the fund amounts for all parts based on their individual rates
+          function updatePartFundAmounts() {
+              const balance = fundAmountInput.value;
+              console.log('updatePartFundAmounts balance: ', balance)
+              document.querySelectorAll('.part-fund-rate').forEach(function (partFundRateInput) {
+                  const fundRate = parseFloat(partFundRateInput.value);
+                  console.log('updatePartFundAmounts fundRate: ', fundRate)
+                  const partFundAmountInput = partFundRateInput.closest('.part-form').querySelector('.part-fund-amount');
+                  partFundAmountInput.textContent = `${calculateFundAmount(fundRate, balance)} $`;
+                  partFundAmountInput.value = calculateFundAmount(fundRate, balance);
+              });
+          }
+
+          // Updates the counters for parts and orders in the UI
+          function updateCounters() {
+              document.getElementById("partCount").textContent = document.querySelectorAll(".part-form").length;
+              document.getElementById("orderCount").textContent = totalOrderCount;
+          }
+
+          // Adds a notification message to the UI
+          function addMessage(message, type) {
+              const messagesContainer = document.querySelector('.main-body .page-wrapper');
+
+              // Create the alert div
+              const alertDiv = document.createElement('div');
+              alertDiv.className = `alert ${type} alert-dismissible`;
+              alertDiv.role = 'alert';
+              alertDiv.innerHTML = `
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <h5 class="alert-heading">
+                    <i class="feather icon-alert-circle me-2"></i>
+                </h5>
+                <p class="mb-0">${message}</p>
+              `;
+
+              // Insert the alert div at the top of the messages container
+              messagesContainer.prepend(alertDiv);
+          }
+
+          // Retrieves the CSRF token for making secure AJAX requests
+          function getCookie(name) {
+              let cookieValue = null;
+              if (document.cookie && document.cookie !== '') {
+                  const cookies = document.cookie.split(';');
+                  for (let i = 0; i < cookies.length; i++) {
+                      const cookie = cookies[i].trim();
+                      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                          break;
+                      }
+                  }
+              }
+              return cookieValue;
+          }
+
+          /*** FORM EVENT HANDLERS ***/
+
+          // Updates the system fund amount when the fund rate changes
+          fundRateInput.addEventListener('input', updateSystemFundAmount);
+
+          // Updates the system and part fund amounts when the API type changes
+          apiTypeInput.addEventListener('change', function () {
+              updateSystemFundAmount();
+              updatePartFundAmounts();
+          });
+
+          // Updates the part fund amounts when an individual part fund rate changes
+          document.addEventListener('input', function (event) {
+              if (event.target.classList.contains('part-fund-rate')) {
+                  updatePartFundAmounts();
+              }
+          });
+
+          /*** PART FORM MANAGEMENT ***/
+
+          // Adds a new part form dynamically to the UI
+          function addPartForm() {
+              partIndex++;
+              orderCounters[partIndex] = 1; // Initialize the counter for this engine
+              const partForm = document.createElement('div');
+              partForm.classList.add('part-form', 'needs-validation', 'mb-5');
+              partForm.setAttribute('id', `part-${partIndex}`);
+              partForm.setAttribute('novalidate', '');
+              partForm.innerHTML = `
+              {% csrf_token %}
+              <div class="row">
+                  <div class="form-group col-md-4">
+                      <label class="form-label" for="part-${partIndex}-part_name">
+                          Part Name
+                          <span class="text-danger">*</span>
+                      </label>
+                      <input type="text" name="part-${partIndex}-part_name" maxlength="256"
+                             required id="part-${partIndex}-part_name" class="form-control">
+                  </div>
+                  <div class="form-group col-md-4">
+                      <label class="form-label" for="part-${partIndex}-start_order_number">
+                          Start Order Number
+                      </label>
+                      <input type="number" class="vTextField form-control" required
+                             name="part-${partIndex}-start_order_number"
+                             id="part-${partIndex}-start_order_number">
+                  </div>
+                  <div class="form-group col-md-4">
+                      <label class="form-label" for="part-${partIndex}-end_order_number">
+                          End Order Number
+                      </label>
+                      <input type="number" class="vTextField form-control" required
+                             name="part-${partIndex}-end_order_number"
+                             id="part-${partIndex}-end_order_number">
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="form-group col-md-4">
+                      <label class="form-label" for="part-${partIndex}-part_fund_rate">
+                          Part Fund Rate
+                          <span class="text-danger">*</span>
+                          (<span class="part-fund-amount">0$</span>)
+                      </label>
+                      <input type="number" required class="vTextField form-control part-fund-rate"
+                              name="part-${partIndex}-part_fund_rate" maxlength="256"
+                              id="part-${partIndex}-part_fund_rate" >
+                  </div>
+                  <div class="form-group col-md-4">
+                      <label class="form-label" for="part-${partIndex}-next_order_condition">
+                          Next Order Condition
+                      </label>
+                      <input type="number" class="vTextField form-control" required
+                             name="part-${partIndex}-next_order_condition"
+                             id="part-${partIndex}-next_order_condition">
+                  </div>
+                  <div class="form-group col-md-4">
+                      <label class="form-label" for="part-${partIndex}-take_profit_condition">
+                          Take Profit Condition
+                      </label>
+                      <input type="number" class="vTextField form-control" required
+                             name="part-${partIndex}-take_profit_condition"
+                             id="part-${partIndex}-take_profit_condition">
+                  </div>
+              </div>
+              <button type="button" class="btn btn-danger mt-2" onclick="removePartForm(${partIndex})">Remove Part</button>
+            `;
+              document.getElementById("partFormsContainer").appendChild(partForm);
+
+              updateCounters(); // Update counters after adding an engine
+          }
+
+          // Removes a part form dynamically from the UI
+          window.removePartForm = function (partIndex) {
+              const partElement = document.getElementById(`part-${partIndex}`);
+              partElement.remove();
+
+              updateCounters(); // Update counters after removing an engine
+          }
+
+          document.getElementById("addPartButton").addEventListener("click", addPartForm);
+
+          /*** BALANCE CALCULATION ***/
+          const calculateButton = document.getElementById('calculate-balances-btn');
+          const loadingIndicator = document.getElementById('loading-indicator');
+
+          calculateButton.addEventListener('click', function () {
+              loadingIndicator.style.display = 'block'; // Show loading indicator
+              fetch(`/trades/get_balance/${apiTypeInput.value}/`, {
+                  method: 'GET',
+                  headers: {
+                      'Content-Type': 'application/json',
+                      'X-CSRFToken': getCookie('csrftoken') // Ensure CSRF token is included
+                  },
+              })
+                  .then(response => response.json())
+                  .then(data => {
+                      spotBalance = document.getElementById('spot_balance').value = parseFloat(data.spot_balance);
+                      swapBalance = document.getElementById('swap_balance').value = parseFloat(data.swap_balance);
+                      console.log('spotBalance: ', spotBalance)
+                      console.log('swapBalance: ', swapBalance)
+                      updateSystemFundAmount();
+                      updatePartFundAmounts();
+                      addMessage(data.message, 'alert-success');
+                      loadingIndicator.style.display = 'none'; // Hide loading indicator
+                  })
+                  .catch(error => {
+                      console.error('Error:', error);
+                      addMessage(error, 'alert-warning');
+                      loadingIndicator.style.display = 'none'; // Hide loading indicator
+                  });
+          });
+
+
+          /*** INITIALIZATION ***/
+
+          // Initialize counters and update initial fund amounts
+          updateCounters();
+          updateSystemFundAmount();
+          updatePartFundAmounts();
+
+
+      });
+  </script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          const form = document.getElementById("systemForm");
+          const saveButton = document.getElementById("saveButton");
+          const submitButton = document.getElementById("submitButton");
+
+          saveButton.addEventListener("click", function () {
+              // Update the form action or add query param for Save
+              form.action = "./?action=save";
+          });
+
+          submitButton.addEventListener("click", function () {
+              // Update the form action or add query param for Submit
+              form.action = "./?action=submit";
+          });
+      });
+  </script>
+
+{% endblock extra_js %}

@@ -1,5 +1,5 @@
 from django import forms
-from apps.trade.models import API, UltraDCASystem, UltraDCAEngine, UltraDCAOrder
+from apps.trade.models import API, UltraDCASystem, UltraDCAEngine, UltraDCAOrder, UltraGridPart, UltraGridSystem
 
 ####################### UltraDCA #######################
 from apps.users.models import ApiStatus
@@ -87,4 +87,63 @@ class UltraDCASmartSystemForm(forms.ModelForm):
         model = UltraDCASystem
         fields = '__all__'
 
+
 ####################### UltraGrid #######################
+class UltraGridAdvancedSystemForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        try:
+            user = kwargs.pop('user')
+            self.user = user
+        except:
+            self.user = None
+        super().__init__(*args, **kwargs)
+
+        self.fields['currency'].queryset = self.user.currencies.all()
+        self.fields['api'].queryset = self.user.api_set.filter(status=ApiStatus.Active)
+
+        self.fields['market_strategy'].widget.attrs.update({'class': "form-control"})
+        self.fields['system_name'].widget.attrs.update({'class': "form-control"})
+        self.fields['currency'].widget.attrs.update({'class': "form-control"})
+        self.fields['api'].widget.attrs.update({'class': "form-control"})
+        self.fields['leverage'].widget.attrs.update({'class': "form-control"})
+        self.fields['system_fund_rate'].widget.attrs.update({'class': "form-control"})
+        self.fields['stop_loss_is_enabled'].widget.attrs.update({'class': "form-control"})
+        self.fields['stop_loss_price'].widget.attrs.update({'class': "form-control"})
+        self.fields['is_limited_order'].widget.attrs.update({'class': "form-control"})
+        self.fields['low_price_bound'].widget.attrs.update({'class': "form-control"})
+        self.fields['high_price_bound'].widget.attrs.update({'class': "form-control"})
+
+    class Meta:
+        model = UltraGridSystem
+        fields = [
+            'system_name',
+            'market_strategy',
+            'currency',
+            'api',
+            'leverage',
+            'system_fund_rate',
+            'stop_loss_is_enabled',
+            'stop_loss_price',
+            'is_limited_order',
+            'low_price_bound',
+            'high_price_bound',
+        ]
+
+
+class UltraGridPartForm(forms.ModelForm):
+    class Meta:
+        model = UltraGridPart
+        fields = [
+            'part_name',
+            'start_order_number',
+            'end_order_number',
+            'part_fund_rate',
+            'next_order_condition',
+            'take_profit_condition',
+        ]
+
+
+class UltraGridSmartSystemForm(forms.ModelForm):
+    class Meta:
+        model = UltraGridSystem
+        fields = '__all__'
